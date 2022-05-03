@@ -56,6 +56,36 @@ class Stage extends MusicBeatState
 
 		switch (daStage)
 		{
+			case 'room':
+				{
+					var bg = new FlxSprite(-1590, -702).loadGraphic(Paths.image('stages/room/room_back', 'dj'));
+					bg.scrollFactor.set(1, 1);
+					bg.scale.set(0.35, 0.35);
+					bg.antialiasing = FlxG.save.data.antialiasing;
+					swagBacks['bg'] = bg;
+					toAdd.push(bg);
+
+					var fg = new FlxSprite(-2188, -934).loadGraphic(Paths.image('stages/room/room_front', 'dj'));
+					fg.scrollFactor.set(1.1, 1.1);
+					fg.scale.set(0.35, 0.35);
+					fg.antialiasing = FlxG.save.data.antialiasing;
+					swagBacks['fg'] = fg;
+					toAdd.push(fg);
+
+					var plushies = new FlxSprite(1151, 440).loadGraphic(Paths.image('stages/room/room_plushies', 'dj'));
+					plushies.scrollFactor.set(1, 1);
+					plushies.scale.set(0.35, 0.35);
+					plushies.antialiasing = FlxG.save.data.antialiasing;
+					swagBacks['plushies'] = plushies;
+					toAdd.push(plushies);
+
+					// var lights = new FlxSprite().loadGraphic(Paths.loadImage('stages/room/room_lights', 'dj'));
+					// lights.scrollFactor.set(0, 0);
+					// lights.scale.set(0.25, 0.25);
+					// lights.antialiasing = FlxG.save.data.antialiasing;
+					// swagBacks['lights'] = lights;
+					// toAdd.push(lights);
+				}
 			case 'halloween':
 				{
 					var hallowTex = Paths.getSparrowAtlas('halloween_bg', 'week2');

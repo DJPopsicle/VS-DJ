@@ -1,53 +1,53 @@
 {
   "name": "Boyfriend",
-  "asset": "characters/BOYFRIEND",
+  "asset": "characters/BF",
   "barColor": "#31B0D1",
   "flipX": true,
   "startingAnim": "idle",
   "animations": [
     {
       "name": "idle",
-      "prefix": "BF idle dance",
+      "prefix": "BF idle dance instance 1",
       "offsets": [-5, 0]
     },
     {
       "name": "singUP",
-      "prefix": "BF NOTE UP0",
+      "prefix": "BF NOTE UP instance 10",
       "offsets": [-29, 27]
     },
     {
       "name": "singLEFT",
-      "prefix": "BF NOTE LEFT0",
+      "prefix": "BF NOTE LEFT instance 10",
       "offsets": [12, -6]
     },
     {
       "name": "singRIGHT",
-      "prefix": "BF NOTE RIGHT0",
+      "prefix": "BF NOTE RIGHT instance 10",
       "offsets": [-38, -7]
     },
     {
       "name": "singDOWN",
-      "prefix": "BF NOTE DOWN0",
+      "prefix": "BF NOTE DOWN instance 10",
       "offsets": [-10, -50]
     },
     {
       "name": "singUPmiss",
-      "prefix": "BF NOTE UP MISS",
+      "prefix": "BF NOTE UP MISS instance 1",
       "offsets": [-29, 27]
     },
     {
       "name": "singLEFTmiss",
-      "prefix": "BF NOTE LEFT MISS",
+      "prefix": "BF NOTE LEFT MISS instance 1",
       "offsets": [12, 24]
     },
     {
       "name": "singRIGHTmiss",
-      "prefix": "BF NOTE RIGHT MISS",
+      "prefix": "BF NOTE RIGHT MISS instance 1",
       "offsets": [-30, 21]
     },
     {
       "name": "singDOWNmiss",
-      "prefix": "BF NOTE DOWN MISS",
+      "prefix": "BF NOTE DOWN MISS instance 1",
       "offsets": [-11, -19]
     },
     {
@@ -57,24 +57,34 @@
     },
     {
       "name": "firstDeath",
-      "prefix": "BF dies",
+      "prefix": "BF dies instance 1",
       "offsets": [37, 11]
     },
     {
       "name": "deathLoop",
-      "prefix": "BF Dead Loop",
+      "prefix": "BF Dead Loop instance 1",
       "offsets": [37, 5]
     },
     {
       "name": "deathConfirm",
-      "prefix": "BF Dead confirm",
+      "prefix": "BF Dead confirm instance 1",
       "offsets": [37, 69]
     },
     {
       "name": "scared",
-      "prefix": "BF idle shaking",
+      "prefix": "BF idle shaking instance 1",
       "offsets": [-4, 0],
       "looped": true
+    },
+    {
+      "name": "preAttack",
+      "prefix": "bf pre attack instance 1",
+      "offsets": [-50, -35]
+    },
+    {
+      "name": "attack",
+      "prefix": "BF Mic Attack Chaz instance 1",
+      "offsets": [781, 1]
     }
   ]
 }

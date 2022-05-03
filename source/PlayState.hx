@@ -643,9 +643,9 @@ class PlayState extends MusicBeatState
 					dad.x -= 150;
 				dad.y += 200;
 			case 'dj-c':
-				if (!stageTesting)
-					dad.x -= 300;
-				dad.y += 20;
+				// if (!stageTesting)
+				// dad.x -= 300;
+				// dad.y += 20;
 				camPos.set(dad.getMidpoint().x + 150, dad.getMidpoint().y - 100);
 				camPos.set(dad.getMidpoint().x, dad.getMidpoint().y - 200);
 			case 'gf':
@@ -2898,13 +2898,8 @@ class PlayState extends MusicBeatState
 
 				switch (dad.curCharacter)
 				{
-					case 'mom' | 'mom-car':
-						camFollow.y = dad.getMidpoint().y;
-					case 'senpai' | 'senpai-angry':
-						camFollow.y = dad.getMidpoint().y - 430;
-						camFollow.x = dad.getMidpoint().x - 100;
 					case 'dj-c':
-						camFollow.setPosition(dad.getMidpoint().x + offsetX, dad.getMidpoint().y - 200);
+						camFollow.setPosition(dad.getMidpoint().x + offsetX, dad.getMidpoint().y - 120);
 				}
 			}
 

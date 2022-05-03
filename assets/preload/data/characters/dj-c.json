@@ -1,0 +1,45 @@
+{
+  "name": "dj-c",
+  "asset": "characters/Chaz_DJ",
+  "barColor": "#FF3C6E",
+  "scale": 0.75,
+  "startingAnim": "idle",
+  "camPos": [-300, 50],
+  "animations": [
+    {
+      "name": "idle",
+      "prefix": "DJ Idle",
+      "offsets": [309, 168]
+    },
+    {
+      "name": "singUP",
+      "prefix": "DJ Up",
+      "offsets": [310, 168]
+    },
+    {
+      "name": "singLEFT",
+      "prefix": "DJ Left",
+      "offsets": [308, 169]
+    },
+    {
+      "name": "singRIGHT",
+      "prefix": "DJ Right",
+      "offsets": [311, 169]
+    },
+    {
+      "name": "singDOWN",
+      "prefix": "DJ Down",
+      "offsets": [310, 169]
+    },
+    {
+      "name": "dodge",
+      "prefix": "DJ Attacked",
+      "offsets": [310, 169]
+    },
+    {
+      "name": "laugh",
+      "prefix": "DJ Laugh",
+      "offsets": [309, 168]
+    }
+  ]
+}
