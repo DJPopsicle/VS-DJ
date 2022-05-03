@@ -73,7 +73,7 @@ class Caching extends MusicBeatState
 		text.alignment = FlxTextAlign.CENTER;
 		text.alpha = 0;
 
-		kadeLogo = new FlxSprite(FlxG.width / 2, FlxG.height / 2).loadGraphic(Paths.loadImage('KadeEngineLogo'));
+		kadeLogo = new FlxSprite(FlxG.width / 2, FlxG.height / 2).loadGraphic(Paths.image('KadeEngineLogo'));
 		kadeLogo.x -= kadeLogo.width / 2;
 		kadeLogo.y -= kadeLogo.height / 2 + 100;
 		text.y -= kadeLogo.height / 2 - 125;
@@ -181,22 +181,22 @@ class Caching extends MusicBeatState
 			done++;
 		}
 
-		for (i in music)
-		{
-			var inst = Paths.inst(i);
-			if (Paths.doesSoundAssetExist(inst))
+		/*for (i in music)
 			{
-				FlxG.sound.cache(inst);
-			}
+				var inst = Paths.inst(i);
+				if (Paths.doesSoundAssetExist(inst))
+				{
+					FlxG.sound.cache(inst);
+				}
 
-			var voices = Paths.voices(i);
-			if (Paths.doesSoundAssetExist(voices))
-			{
-				FlxG.sound.cache(voices);
-			}
+				var voices = Paths.voices(i);
+				if (Paths.doesSoundAssetExist(voices))
+				{
+					FlxG.sound.cache(voices);
+				}
 
-			done++;
-		}
+				done++;
+		}*/
 
 		Debug.logTrace("Finished caching...");
 

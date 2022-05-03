@@ -98,12 +98,12 @@ class StageDebugState extends FlxState
 		camHUD = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
 		camGame = new FlxCamera();
-		camGame.zoom = 0.7;
+		FlxG.camera.zoom = 0.7;
 		FlxG.cameras.add(camGame);
 		FlxG.cameras.add(camHUD);
 		FlxCamera.defaultCameras = [camGame];
 		FlxG.camera = camGame;
-		camGame.follow(camFollow);
+		FlxG.camera.follow(camFollow);
 
 		posText = new FlxText(0, 0);
 		posText.size = 26;
@@ -130,13 +130,13 @@ class StageDebugState extends FlxState
 	override public function update(elapsed:Float)
 	{
 		if (FlxG.keys.justPressed.E)
-			camGame.zoom += 0.1;
+			FlxG.camera.zoom += 0.1;
 		if (FlxG.keys.justPressed.Q)
 		{
-			if (camGame.zoom > 0.11) // me when floating point error
-				camGame.zoom -= 0.1;
+			if (FlxG.camera.zoom > 0.11) // me when floating point error
+				FlxG.camera.zoom -= 0.1;
 		}
-		FlxG.watch.addQuick('Camera Zoom', camGame.zoom);
+		FlxG.watch.addQuick('Camera Zoom', FlxG.camera.zoom);
 
 		if (FlxG.keys.justPressed.SHIFT)
 		{

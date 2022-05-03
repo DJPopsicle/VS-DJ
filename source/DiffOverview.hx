@@ -52,6 +52,8 @@ class DiffOverview extends FlxSubState
 
 	override function create()
 	{
+		Main.dumpCache();
+		Paths.clearStoredMemory();
 		Conductor.songPosition = 0;
 		Conductor.lastSongPos = 0;
 
@@ -120,6 +122,7 @@ class DiffOverview extends FlxSubState
 
 		trace('pog');
 
+		Paths.clearUnusedMemory();
 		super.create();
 	}
 
@@ -319,7 +322,7 @@ class DiffOverview extends FlxSubState
 			}
 
 			daNote.y = (playerStrums.members[Math.floor(Math.abs(daNote.noteData))].y
-				- 0.45 * (Conductor.songPosition - daNote.strumTime) * FlxMath.roundDecimal(SONG.speed, 2));
+				- 0.45 * (Conductor.songPosition - daNote.strumTime) * FlxMath.roundDecimal(PlayState.SONG.speed, 2));
 
 			if (daNote.isSustainNote)
 			{

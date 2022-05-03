@@ -6,6 +6,7 @@ import LuaClass.LuaWindow;
 import LuaClass.LuaSprite;
 import LuaClass.LuaCamera;
 import LuaClass.LuaReceptor;
+import LuaClass.LuaNote;
 import openfl.display3D.textures.VideoTexture;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -24,11 +25,16 @@ import llua.LuaL;
 import flixel.FlxBasic;
 import flixel.FlxCamera;
 import flixel.FlxG;
+import openfl.Lib;
+
+using StringTools;
 
 class ModchartState
 {
 	// public static var shaders:Array<LuaShader> = null;
 	public static var lua:State = null;
+
+	public static var shownNotes:Array<LuaNote> = [];
 
 	function callLua(func_name:String, args:Array<Dynamic>, ?type:String):Dynamic
 	{
@@ -398,8 +404,9 @@ class ModchartState
 
 	// LUA SHIT
 
-	function new(?isStoryMode = true)
+	public function new()
 	{
+		shownNotes = [];
 		trace('opening a lua state (because we are cool :))');
 		lua = LuaL.newstate();
 		LuaL.openlibs(lua);
@@ -431,6 +438,7 @@ class ModchartState
 		{
 			Application.current.window.alert("LUA COMPILE ERROR:\n" + Lua.tostring(lua, result), "Kade Engine Modcharts");
 			FlxG.switchState(new FreeplayState());
+			PlayState.instance.clean();
 			return;
 		}
 
@@ -438,12 +446,15 @@ class ModchartState
 
 		setVar("difficulty", PlayState.storyDifficulty);
 		setVar("bpm", Conductor.bpm);
-		setVar("scrollspeed", FlxG.save.data.scrollSpeed != 1 ? FlxG.save.data.scrollSpeed : PlayState.SONG.speed);
+		setVar("scrollspeed",
+			FlxG.save.data.scrollSpeed != 1 ? FlxG.save.data.scrollSpeed * PlayState.songMultiplier : PlayState.SONG.speed * PlayState.songMultiplier);
 		setVar("fpsCap", FlxG.save.data.fpsCap);
 		setVar("downscroll", FlxG.save.data.downscroll);
 		setVar("flashing", FlxG.save.data.flashing);
 		setVar("distractions", FlxG.save.data.distractions);
 		setVar("colour", FlxG.save.data.colour);
+		setVar("middlescroll", FlxG.save.data.middleScroll);
+		setVar("rate", PlayState.songMultiplier); // Kinda XD since you can modify this through Lua and break the game.
 
 		setVar("curStep", 0);
 		setVar("curBeat", 0);
@@ -476,6 +487,7 @@ class ModchartState
 
 		// callbacks
 
+		Lua_helper.add_callback(lua, "getProperty", getPropertyByName);
 		Lua_helper.add_callback(lua, "makeSprite", makeLuaSprite);
 
 		// sprites
@@ -522,9 +534,99 @@ class ModchartState
 			PlayState.instance.strumLine.y = y;
 		});
 
-		Lua_helper.add_callback(lua, "getNumberOfNotes", function(y:Float)
+		Lua_helper.add_callback(lua, "getNotes", function(y:Float)
 		{
-			return PlayState.instance.notes.members.length;
+			Lua.newtable(lua);
+
+			for (i in 0...PlayState.instance.notes.members.length)
+			{
+				var note = PlayState.instance.notes.members[i];
+				Lua.pushstring(lua, note.LuaNote.className);
+				Lua.rawseti(lua, -2, i);
+			}
+		});
+
+		Lua_helper.add_callback(lua, "setScrollSpeed", function(value:Float)
+		{
+			PlayState.instance.scrollSpeed = value;
+		});
+
+		Lua_helper.add_callback(lua, "changeScrollSpeed", function(mult:Float, time:Float, ?ease:String)
+		{
+			PlayState.instance.changeScrollSpeed(mult, time, getFlxEaseByString(ease));
+		});
+
+		Lua_helper.add_callback(lua, "setCamZoom", function(zoomAmount:Float)
+		{
+			FlxG.camera.zoom = zoomAmount;
+		});
+
+		Lua_helper.add_callback(lua, "setHudZoom", function(zoomAmount:Float)
+		{
+			PlayState.instance.camHUD.zoom = zoomAmount;
+		});
+
+		Lua_helper.add_callback(lua, "initBackgroundVideo", function(videoName:String)
+		{
+			trace('playing assets/videos/' + videoName + '.webm');
+			PlayState.instance.backgroundVideo("assets/videos/" + videoName + ".webm");
+		});
+
+		Lua_helper.add_callback(lua, "pauseVideo", function()
+		{
+			if (!GlobalVideo.get().paused)
+				GlobalVideo.get().pause();
+		});
+
+		Lua_helper.add_callback(lua, "resumeVideo", function()
+		{
+			if (GlobalVideo.get().paused)
+				GlobalVideo.get().pause();
+		});
+
+		Lua_helper.add_callback(lua, "restartVideo", function()
+		{
+			GlobalVideo.get().restart();
+		});
+
+		Lua_helper.add_callback(lua, "getVideoSpriteX", function()
+		{
+			return PlayState.instance.videoSprite.x;
+		});
+
+		Lua_helper.add_callback(lua, "getVideoSpriteY", function()
+		{
+			return PlayState.instance.videoSprite.y;
+		});
+
+		Lua_helper.add_callback(lua, "setVideoSpritePos", function(x:Int, y:Int)
+		{
+			PlayState.instance.videoSprite.setPosition(x, y);
+		});
+
+		Lua_helper.add_callback(lua, "setVideoSpriteScale", function(scale:Float)
+		{
+			PlayState.instance.videoSprite.setGraphicSize(Std.int(PlayState.instance.videoSprite.width * scale));
+		});
+
+		Lua_helper.add_callback(lua, "setLaneUnderLayPos", function(value:Int)
+		{
+			PlayState.instance.laneunderlay.x = value;
+		});
+
+		Lua_helper.add_callback(lua, "setOpponentLaneUnderLayOpponentPos", function(value:Int)
+		{
+			PlayState.instance.laneunderlayOpponent.x = value;
+		});
+
+		Lua_helper.add_callback(lua, "setLaneUnderLayAlpha", function(value:Int)
+		{
+			PlayState.instance.laneunderlay.alpha = value;
+		});
+
+		Lua_helper.add_callback(lua, "setOpponentLaneUnderLayOpponentAlpha", function(value:Int)
+		{
+			PlayState.instance.laneunderlayOpponent.alpha = value;
 		});
 
 		for (i in 0...PlayState.strumLineNotes.length)
@@ -543,9 +645,89 @@ class ModchartState
 		return Lua.tostring(lua, callLua(name, args));
 	}
 
-	public static function createModchartState(?isStoryMode = true):ModchartState
+	public static function createModchartState():ModchartState
 	{
-		return new ModchartState(isStoryMode);
+		return new ModchartState();
+	}
+
+	public static function getFlxEaseByString(?ease:String = '')
+	{
+		switch (ease.toLowerCase().trim())
+		{
+			case 'backin':
+				return FlxEase.backIn;
+			case 'backinout':
+				return FlxEase.backInOut;
+			case 'backout':
+				return FlxEase.backOut;
+			case 'bouncein':
+				return FlxEase.bounceIn;
+			case 'bounceinout':
+				return FlxEase.bounceInOut;
+			case 'bounceout':
+				return FlxEase.bounceOut;
+			case 'circin':
+				return FlxEase.circIn;
+			case 'circinout':
+				return FlxEase.circInOut;
+			case 'circout':
+				return FlxEase.circOut;
+			case 'cubein':
+				return FlxEase.cubeIn;
+			case 'cubeinout':
+				return FlxEase.cubeInOut;
+			case 'cubeout':
+				return FlxEase.cubeOut;
+			case 'elasticin':
+				return FlxEase.elasticIn;
+			case 'elasticinout':
+				return FlxEase.elasticInOut;
+			case 'elasticout':
+				return FlxEase.elasticOut;
+			case 'expoin':
+				return FlxEase.expoIn;
+			case 'expoinout':
+				return FlxEase.expoInOut;
+			case 'expoout':
+				return FlxEase.expoOut;
+			case 'quadin':
+				return FlxEase.quadIn;
+			case 'quadinout':
+				return FlxEase.quadInOut;
+			case 'quadout':
+				return FlxEase.quadOut;
+			case 'quartin':
+				return FlxEase.quartIn;
+			case 'quartinout':
+				return FlxEase.quartInOut;
+			case 'quartout':
+				return FlxEase.quartOut;
+			case 'quintin':
+				return FlxEase.quintIn;
+			case 'quintinout':
+				return FlxEase.quintInOut;
+			case 'quintout':
+				return FlxEase.quintOut;
+			case 'sinein':
+				return FlxEase.sineIn;
+			case 'sineinout':
+				return FlxEase.sineInOut;
+			case 'sineout':
+				return FlxEase.sineOut;
+			case 'smoothstepin':
+				return FlxEase.smoothStepIn;
+			case 'smoothstepinout':
+				return FlxEase.smoothStepInOut;
+			case 'smoothstepout':
+				return FlxEase.smoothStepInOut;
+			case 'smootherstepin':
+				return FlxEase.smootherStepIn;
+			case 'smootherstepinout':
+				return FlxEase.smootherStepInOut;
+			case 'smootherstepout':
+				return FlxEase.smootherStepOut;
+		}
+		return FlxEase.linear;
 	}
 }
 #end

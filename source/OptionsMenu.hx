@@ -1,11 +1,13 @@
 package;
 
+import flixel.util.FlxTimer;
 import flixel.FlxCamera;
 import flixel.FlxSubState;
 import flixel.input.gamepad.FlxGamepad;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import openfl.Lib;
+import PlayState;
 import Options;
 import Controls.Control;
 import flash.text.TextField;
@@ -17,10 +19,14 @@ import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import flixel.ui.FlxBar;
 
 class OptionCata extends FlxSprite
 {
 	public var title:String;
+
+	public static var instance:OptionCata;
+
 	public var options:Array<Option>;
 
 	public var optionObjects:FlxTypedGroup<FlxText>;
@@ -28,6 +34,8 @@ class OptionCata extends FlxSprite
 	public var titleObject:FlxText;
 
 	public var middle:Bool = false;
+
+	public var text:FlxText;
 
 	public function new(x:Float, y:Float, _title:String, _options:Array<Option>, middleType:Bool = false)
 	{
@@ -60,7 +68,7 @@ class OptionCata extends FlxSprite
 		for (i in 0...options.length)
 		{
 			var opt = options[i];
-			var text:FlxText = new FlxText((middleType ? 1180 / 2 : 72), titleObject.y + 54 + (46 * i), 0, opt.getValue());
+			text = new FlxText((middleType ? 1180 / 2 : 72), 120 + 54 + (46 * i), 0, opt.getValue());
 			if (middleType)
 			{
 				text.screenCenter(X);
@@ -69,6 +77,7 @@ class OptionCata extends FlxSprite
 			text.borderSize = 3;
 			text.borderQuality = 1;
 			text.scrollFactor.set();
+
 			optionObjects.add(text);
 		}
 	}
@@ -100,7 +109,9 @@ class OptionsMenu extends FlxSubState
 
 	public var shownStuff:FlxTypedGroup<FlxText>;
 
-	public static var visibleRange = [114, 640];
+	public static var visibleRange = [164, 640];
+
+	var changedOption = false;
 
 	public function new(pauseMenu:Bool = false)
 	{
@@ -119,14 +130,14 @@ class OptionsMenu extends FlxSubState
 		options = [
 			new OptionCata(50, 40, "Gameplay", [
 				new ScrollSpeedOption("Change your scroll speed. (1 = Chart dependent)"),
-				new OffsetThing("Change the note audio offset (how many milliseconds a note is offset in a chart)"),
+				new OffsetThing("Change the note visual offset (how many milliseconds a note looks like it is offset in a chart)"),
 				new AccuracyDOption("Change how accuracy is calculated. (Accurate = Simple, Complex = Milisecond Based)"),
 				new GhostTapOption("Toggle counting pressing a directional input when no arrow is there as a miss."),
 				new DownscrollOption("Toggle making the notes scroll down rather than up."),
 				new BotPlay("A bot plays for you!"),
 				#if desktop new FPSCapOption("Change your FPS Cap."),
 				#end
-				new ResetButtonOption("Toggle pressing R to gameover."),
+				new ResetButtonOption("Toggle pressing R to gameover. (Use it with caution!)"),
 				new InstantRespawn("Toggle if you instantly respawn after dying."),
 				new CamZoomOption("Toggle the camera zoom in-game."),
 				// new OffsetMenu("Get a note offset based off of your inputs!"),
@@ -138,6 +149,8 @@ class OptionsMenu extends FlxSubState
 			]),
 			new OptionCata(345, 40, "Appearance", [
 				new NoteskinOption("Change your current noteskin"),
+
+				new RotateSpritesOption("Rotate the sprites to do color quantization (turn off for bar skins)"),
 				new EditorRes("Not showing the editor grid will greatly increase editor performance"),
 				new DistractionsAndEffectsOption("Toggle stage distractions that can hinder your gameplay."),
 				new MiddleScrollOption("Put your lane in the center or on the right."),
@@ -146,14 +159,20 @@ class OptionsMenu extends FlxSubState
 				new LaneUnderlayOption("How transparent your lane is, higher = more visible."),
 				new StepManiaOption("Sets the colors of the arrows depending on quantization instead of direction."),
 				new AccuracyOption("Display accuracy information on the info bar."),
+				new RoundAccuracy("Round your accuracy to the nearest whole number for the score text (cosmetic only)."),
 				new SongPositionOption("Show the song's current position as a scrolling bar."),
 				new Colour("The color behind icons now fit with their theme. (e.g. Pico = green)"),
 				new NPSDisplayOption("Shows your current Notes Per Second on the info bar."),
 				new RainbowFPSOption("Make the FPS Counter flicker through rainbow colors."),
+				new BorderFps("Draw a border around the FPS Text (Consumes a lot of CPU Resources)"),
 				new CpuStrums("Toggle the CPU's strumline lighting up when it hits a note."),
 			]),
 			new OptionCata(640, 40, "Misc", [
+
 				new FPSOption("Toggle the FPS Counter"),
+				new DisplayMemory("Toggle the Memory Usage"),
+				#if FEATURE_DISCORD new DiscordOption("Change your Discord Rich Presence update interval."),
+				#end
 				new FlashingLightsOption("Toggle flashing lights that can cause epileptic seizures and strain."),
 				new WatermarkOption("Enable and disable all watermarks from the engine."),
 				new AntialiasingOption("Toggle antialiasing, improving graphics quality at a slight performance penalty."),
@@ -161,9 +180,15 @@ class OptionsMenu extends FlxSubState
 				new ScoreScreen("Show the score screen after the end of a song"),
 				new ShowInput("Display every single input on the score screen."),
 			]),
-			new OptionCata(935, 40, "Saves", [
+			new OptionCata(935, 40, "Performance", [
+				new OptimizeOption("Disable Background and Characters to save memory. Useful to low-end computers."),
+				new Background("Disable Stage Background to save memory (Only characters are visible)."),
+				new DistractionsAndEffectsOption("Toggle stage distractions that can hinder your gameplay and save memory.")
+			]),
+			new OptionCata(50, 104, "Saves", [
 				#if desktop // new ReplayOption("View saved song replays."),
 				#end
+				new ResetModifiersOption("Reset your Gameplay modifiers. This is irreversible!"),
 				new ResetScoreOption("Reset your score on all songs and weeks. This is irreversible!"),
 				new LockWeeksOption("Reset your story mode progress. This is irreversible!"),
 				new ResetSettings("Reset ALL your settings. This is irreversible!")
@@ -204,7 +229,7 @@ class OptionsMenu extends FlxSubState
 		background.scrollFactor.set();
 		menu.add(background);
 
-		descBack = new FlxSprite(50, 640).makeGraphic(1180, 38, FlxColor.BLACK);
+		descBack = new FlxSprite(50, 642).makeGraphic(1180, 38, FlxColor.BLACK);
 		descBack.alpha = 0.3;
 		descBack.scrollFactor.set();
 		menu.add(descBack);
@@ -216,6 +241,7 @@ class OptionsMenu extends FlxSubState
 			bg.scrollFactor.set();
 			menu.add(bg);
 
+			descBack.alpha = 0.3;
 			background.alpha = 0.5;
 			bg.alpha = 0.6;
 
@@ -232,7 +258,7 @@ class OptionsMenu extends FlxSubState
 
 		for (i in 0...options.length - 1)
 		{
-			if (i >= 4)
+			if (i >= 5)
 				continue;
 			var cat = options[i];
 			add(cat);
@@ -259,9 +285,9 @@ class OptionsMenu extends FlxSubState
 	{
 		try
 		{
-			visibleRange = [114, 640];
-			if (cat.middle)
-				visibleRange = [Std.int(cat.titleObject.y), 640];
+			visibleRange = [164, 640];
+			/*if (cat.middle)
+				visibleRange = [Std.int(cat.titleObject.y), 640]; */
 			if (selectedOption != null)
 			{
 				var object = selectedCat.optionObjects.members[selectedOptionIndex];
@@ -280,7 +306,7 @@ class OptionsMenu extends FlxSubState
 			for (i in 0...selectedCat.options.length)
 			{
 				var opt = selectedCat.optionObjects.members[i];
-				opt.y = selectedCat.titleObject.y + 54 + (46 * i);
+				opt.y = options[4].titleObject.y + 54 + (46 * i);
 			}
 
 			while (shownStuff.members.length != 0)
@@ -304,7 +330,7 @@ class OptionsMenu extends FlxSubState
 				for (i in 0...selectedCat.options.length)
 				{
 					var opt = selectedCat.optionObjects.members[i];
-					opt.y = selectedCat.titleObject.y + 54 + (46 * i);
+					opt.y = options[4].titleObject.y + 54 + (46 * i);
 				}
 			}
 
@@ -332,6 +358,41 @@ class OptionsMenu extends FlxSubState
 		}
 
 		Debug.logTrace("Changed cat: " + selectedCatIndex);
+
+		for (i in 0...selectedCat.optionObjects.length)
+		{
+			selectedCat.optionObjects.members[i].color = FlxColor.WHITE;
+		}
+		if (FlxG.save.data.optimize && selectedCatIndex == 0)
+			selectedCat.optionObjects.members[9].color = FlxColor.YELLOW;
+		if (FlxG.save.data.optimize && selectedCatIndex == 3)
+		{
+			selectedCat.optionObjects.members[1].color = FlxColor.YELLOW;
+			selectedCat.optionObjects.members[2].color = FlxColor.YELLOW;
+		}
+		if (!FlxG.save.data.background && selectedCatIndex == 3)
+		{
+			selectedCat.optionObjects.members[2].color = FlxColor.YELLOW;
+		}
+		if (!FlxG.save.data.healthBar && selectedCatIndex == 1)
+			selectedCat.optionObjects.members[11].color = FlxColor.YELLOW;
+		if (isInPause)
+		{
+			switch (selectedCatIndex)
+			{
+				case 0:
+					selectedCat.optionObjects.members[2].color = FlxColor.YELLOW;
+					selectedCat.optionObjects.members[12].color = FlxColor.YELLOW;
+					if (PlayState.isStoryMode)
+						selectedCat.optionObjects.members[5].color = FlxColor.YELLOW;
+				case 3:
+					for (i in 0...3)
+						selectedCat.optionObjects.members[i].color = FlxColor.YELLOW;
+				case 4:
+					for (i in 0...4)
+						selectedCat.optionObjects.members[i].color = FlxColor.YELLOW;
+			}
+		}
 	}
 
 	public function selectOption(option:Option)
@@ -345,6 +406,41 @@ class OptionsMenu extends FlxSubState
 			object.text = "> " + option.getValue();
 
 			descText.text = option.getDescription();
+			descText.color = FlxColor.WHITE;
+
+			// FOR SOME REASON DESCRIPTION TEXT DOESN'T UPDATE INSIDE THE STATE AND I'M LAZY TO REWORK THIS FUCKING CODE IN OPTIONS SO I'M PUTTING MY CONDITIONS HERE INSTEAD OF OPTIONS.HX
+
+			if (selectedOptionIndex == 11 && !FlxG.save.data.healthBar && selectedCatIndex == 1)
+			{
+				descText.text = "HEALTH BAR IS DISABLED! Colored health bar are disabled.";
+				descText.color = FlxColor.YELLOW;
+			}
+			if (selectedOptionIndex == 1 && FlxG.save.data.optimize && selectedCatIndex == 3)
+			{
+				descText.text = "OPTIMIZATION IS ENABLED! Distracions are disabled.";
+				descText.color = FlxColor.YELLOW;
+			}
+			if (selectedOptionIndex == 2 && FlxG.save.data.optimize && selectedCatIndex == 3)
+			{
+				descText.text = "OPTIMIZATION IS ENABLED! Backgrounds are disabled.";
+				descText.color = FlxColor.YELLOW;
+			}
+			if (selectedOptionIndex == 2 && !FlxG.save.data.background && selectedCatIndex == 3)
+			{
+				descText.text = "BACKGROUNDS ARE DISABLED! Distracions are disabled.";
+				descText.color = FlxColor.YELLOW;
+			}
+			if (selectedOptionIndex == 9 && FlxG.save.data.optimize && selectedCatIndex == 0)
+			{
+				descText.text = "OPTIMIZATION IS ENABLED! Cam Zooming is disabled.";
+				descText.color = FlxColor.YELLOW;
+			}
+			if (descText.text == "BOTPLAY is disabled on Story Mode.")
+			{
+				descText.color = FlxColor.YELLOW;
+			}
+			if (descText.text == "This option cannot be toggled in the pause menu.")
+				descText.color = FlxColor.YELLOW;
 		}
 		Debug.logTrace("Changed opt: " + selectedOptionIndex);
 
@@ -364,6 +460,8 @@ class OptionsMenu extends FlxSubState
 		var down = false;
 		var any = false;
 		var escape = false;
+
+		changedOption = false;
 
 		accept = FlxG.keys.justPressed.ENTER || (gamepad != null ? gamepad.justPressed.A : false);
 		right = FlxG.keys.justPressed.RIGHT || (gamepad != null ? gamepad.justPressed.DPAD_RIGHT : false);
@@ -403,6 +501,7 @@ class OptionsMenu extends FlxSubState
 			if (isInCat)
 			{
 				descText.text = "Please select a category";
+				descText.color = FlxColor.WHITE;
 				if (right)
 				{
 					FlxG.sound.play(Paths.sound('scrollMenu'));
@@ -441,11 +540,35 @@ class OptionsMenu extends FlxSubState
 				if (escape)
 				{
 					if (!isInPause)
-						FlxG.switchState(new MainMenuState());
+					{
+						if (!FlxG.save.data.optimize)
+						{
+							FlxTween.tween(background, {alpha: 0}, 0.5, {ease: FlxEase.smootherStepInOut});
+							for (i in 0...selectedCat.optionObjects.length)
+							{
+								FlxTween.tween(selectedCat.optionObjects.members[i], {alpha: 0}, 0.5, {ease: FlxEase.smootherStepInOut});
+							}
+							for (i in 0...options.length - 1)
+							{
+								FlxTween.tween(options[i].titleObject, {alpha: 0}, 0.5, {ease: FlxEase.smootherStepInOut});
+								FlxTween.tween(options[i], {alpha: 0}, 0.5, {ease: FlxEase.smootherStepInOut});
+							}
+							FlxTween.tween(descText, {alpha: 0}, 0.5, {ease: FlxEase.smootherStepInOut});
+							FlxTween.tween(descBack, {alpha: 0}, 0.5, {
+								ease: FlxEase.smootherStepInOut,
+								onComplete: function(twn:FlxTween)
+								{
+									FlxG.switchState(new MainMenuState());
+								}
+							});
+						}
+						else
+							FlxG.switchState(new MainMenuState());
+					}
 					else
 					{
 						PauseSubState.goBack = true;
-						PlayStateChangeables.scrollSpeed = FlxG.save.data.scrollSpeed * PlayState.songMultiplier;
+						PlayState.instance.updateSettings();
 						close();
 					}
 				}
@@ -503,7 +626,7 @@ class OptionsMenu extends FlxSubState
 							for (i in 0...selectedCat.options.length)
 							{
 								var opt = selectedCat.optionObjects.members[i];
-								opt.y = selectedCat.titleObject.y + 54 + (46 * i);
+								opt.y = options[4].titleObject.y + 54 + (46 * i);
 							}
 							selectedOptionIndex = 0;
 						}
@@ -556,7 +679,7 @@ class OptionsMenu extends FlxSubState
 							for (i in 0...selectedCat.options.length)
 							{
 								var opt = selectedCat.optionObjects.members[i];
-								opt.y = selectedCat.titleObject.y + 54 + (46 * i);
+								opt.y = options[4].titleObject.y + 54 + (46 * i);
 							}
 						}
 
@@ -568,6 +691,7 @@ class OptionsMenu extends FlxSubState
 						FlxG.sound.play(Paths.sound('scrollMenu'));
 						var object = selectedCat.optionObjects.members[selectedOptionIndex];
 						selectedOption.right();
+						changedOption = true;
 
 						FlxG.save.flush();
 
@@ -579,13 +703,50 @@ class OptionsMenu extends FlxSubState
 						FlxG.sound.play(Paths.sound('scrollMenu'));
 						var object = selectedCat.optionObjects.members[selectedOptionIndex];
 						selectedOption.left();
+						changedOption = true;
 
 						FlxG.save.flush();
 
 						object.text = "> " + selectedOption.getValue();
 						Debug.logTrace("New text: " + object.text);
 					}
-
+					if (changedOption)
+					{
+						for (i in 0...selectedCat.optionObjects.length)
+						{
+							selectedCat.optionObjects.members[i].color = FlxColor.WHITE;
+						}
+						if (FlxG.save.data.optimize && selectedCatIndex == 0)
+							selectedCat.optionObjects.members[9].color = FlxColor.YELLOW;
+						if (FlxG.save.data.optimize && selectedCatIndex == 3)
+						{
+							selectedCat.optionObjects.members[1].color = FlxColor.YELLOW;
+							selectedCat.optionObjects.members[2].color = FlxColor.YELLOW;
+						}
+						if (!FlxG.save.data.background && selectedCatIndex == 3)
+						{
+							selectedCat.optionObjects.members[2].color = FlxColor.YELLOW;
+						}
+						if (!FlxG.save.data.healthBar && selectedCatIndex == 1)
+							selectedCat.optionObjects.members[11].color = FlxColor.YELLOW;
+						if (isInPause) // DUPLICATED CUZ MEMORY LEAK OR SMTH IDK
+						{
+							switch (selectedCatIndex)
+							{
+								case 0:
+									selectedCat.optionObjects.members[2].color = FlxColor.YELLOW;
+									selectedCat.optionObjects.members[12].color = FlxColor.YELLOW;
+									if (PlayState.isStoryMode)
+										selectedCat.optionObjects.members[5].color = FlxColor.YELLOW;
+								case 3:
+									for (i in 0...3)
+										selectedCat.optionObjects.members[i].color = FlxColor.YELLOW;
+								case 4:
+									for (i in 0...4)
+										selectedCat.optionObjects.members[i].color = FlxColor.YELLOW;
+							}
+						}
+					}
 					if (escape)
 					{
 						FlxG.sound.play(Paths.sound('scrollMenu'));
@@ -612,7 +773,7 @@ class OptionsMenu extends FlxSubState
 						for (i in 0...selectedCat.options.length)
 						{
 							var opt = selectedCat.optionObjects.members[i];
-							opt.y = selectedCat.titleObject.y + 54 + (46 * i);
+							opt.y = options[4].titleObject.y + 54 + (46 * i);
 						}
 						selectedCat.optionObjects.members[selectedOptionIndex].text = selectedOption.getValue();
 						isInCat = true;
@@ -648,7 +809,7 @@ class OptionsMenu extends FlxSubState
 				for (i in 0...selectedCat.options.length)
 				{
 					var opt = selectedCat.optionObjects.members[i];
-					opt.y = selectedCat.titleObject.y + 54 + (46 * i);
+					opt.y = options[4].titleObject.y + 54 + (46 * i);
 				}
 				selectedCat.optionObjects.members[selectedOptionIndex].text = selectedOption.getValue();
 				isInCat = true;
