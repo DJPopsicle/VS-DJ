@@ -75,6 +75,16 @@
       "prefix": "BF idle shaking",
       "offsets": [-4, 0],
       "looped": true
+    },
+    {
+      "name": "preAttack",
+      "prefix": "bf pre attack instance 1",
+      "offsets": [-50, -35]
+    },
+    {
+      "name": "attack",
+      "prefix": "BF Mic Attack Chaz instance 1",
+      "offsets": [781, 1]
     }
   ]
 }

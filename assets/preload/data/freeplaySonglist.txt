@@ -1,4 +1,3 @@
-tutorial:gf:0
 storm:dj:1
 drowned:dj:1
 final-test:dj:1

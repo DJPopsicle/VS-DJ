@@ -142,7 +142,7 @@ class Character extends FlxSprite
 
 	override function update(elapsed:Float)
 	{
-		if (!isPlayer)
+		if (!isPlayer && !PlayStateChangeables.opponentMode)
 		{
 			if (animation.curAnim.name.startsWith('sing'))
 				holdTimer += elapsed;
@@ -154,6 +154,17 @@ class Character extends FlxSprite
 				dance();
 				holdTimer = 0;
 			}
+		}
+
+		if (PlayStateChangeables.opponentMode && !isPlayer)
+		{
+			if (animation.curAnim.name.startsWith('sing'))
+				holdTimer += elapsed;
+			else
+				holdTimer = 0;
+
+			if (animation.curAnim.name.endsWith('miss') && animation.curAnim.finished && !debugMode)
+				playAnim('idle', true, false, 10);
 		}
 
 		if (!debugMode)
@@ -181,35 +192,38 @@ class Character extends FlxSprite
 	{
 		if (!debugMode)
 		{
-			var canInterrupt = animInterrupt.get(animation.curAnim.name);
-
-			if (canInterrupt)
+			if (!FlxG.save.data.optimize)
 			{
-				if (isDancing)
-				{
-					danced = !danced;
+				var canInterrupt = animInterrupt.get(animation.curAnim.name);
 
-					if (altAnim && animation.getByName('danceRight-alt') != null && animation.getByName('danceLeft-alt') != null)
-					{
-						if (danced)
-							playAnim('danceRight-alt');
-						else
-							playAnim('danceLeft-alt');
-					}
-					else
-					{
-						if (danced)
-							playAnim('danceRight');
-						else
-							playAnim('danceLeft');
-					}
-				}
-				else
+				if (canInterrupt)
 				{
-					if (altAnim && animation.getByName('idle-alt') != null)
-						playAnim('idle-alt', forced);
+					if (isDancing)
+					{
+						danced = !danced;
+
+						if (altAnim && animation.getByName('danceRight-alt') != null && animation.getByName('danceLeft-alt') != null)
+						{
+							if (danced)
+								playAnim('danceRight-alt');
+							else
+								playAnim('danceLeft-alt');
+						}
+						else
+						{
+							if (danced)
+								playAnim('danceRight');
+							else
+								playAnim('danceLeft');
+						}
+					}
 					else
-						playAnim('idle', forced);
+					{
+						if (altAnim && animation.getByName('idle-alt') != null)
+							playAnim('idle-alt', forced);
+						else
+							playAnim('idle', forced);
+					}
 				}
 			}
 		}
@@ -217,38 +231,41 @@ class Character extends FlxSprite
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
-		if (AnimName.endsWith('alt') && animation.getByName(AnimName) == null)
+		if (!FlxG.save.data.optimize)
 		{
-			#if debug
-			FlxG.log.warn(['Such alt animation doesnt exist: ' + AnimName]);
-			#end
-			AnimName = AnimName.split('-')[0];
-		}
-
-		animation.play(AnimName, Force, Reversed, Frame);
-
-		var daOffset = animOffsets.get(AnimName);
-		if (animOffsets.exists(AnimName))
-		{
-			offset.set(daOffset[0], daOffset[1]);
-		}
-		else
-			offset.set(0, 0);
-
-		if (curCharacter == 'gf')
-		{
-			if (AnimName == 'singLEFT')
+			if (AnimName.endsWith('alt') && animation.getByName(AnimName) == null)
 			{
-				danced = true;
-			}
-			else if (AnimName == 'singRIGHT')
-			{
-				danced = false;
+				#if debug
+				FlxG.log.warn(['Such alt animation doesnt exist: ' + AnimName]);
+				#end
+				AnimName = AnimName.split('-')[0];
 			}
 
-			if (AnimName == 'singUP' || AnimName == 'singDOWN')
+			animation.play(AnimName, Force, Reversed, Frame);
+
+			var daOffset = animOffsets.get(AnimName);
+			if (animOffsets.exists(AnimName))
 			{
-				danced = !danced;
+				offset.set(daOffset[0], daOffset[1]);
+			}
+			else
+				offset.set(0, 0);
+
+			if (curCharacter == 'gf')
+			{
+				if (AnimName == 'singLEFT')
+				{
+					danced = true;
+				}
+				else if (AnimName == 'singRIGHT')
+				{
+					danced = false;
+				}
+
+				if (AnimName == 'singUP' || AnimName == 'singDOWN')
+				{
+					danced = !danced;
+				}
 			}
 		}
 	}
