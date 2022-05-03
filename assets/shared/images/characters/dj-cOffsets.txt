@@ -1,0 +1,7 @@
+idle 309 168
+laugh 309 168
+singRIGHT 311 169
+singDOWN 310 169
+singLEFT 308 169
+singUP 310 168
+dodge 310 169

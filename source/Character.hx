@@ -156,6 +156,7 @@ class Character extends FlxSprite
 			}
 		}
 
+
 		if (PlayStateChangeables.opponentMode && !isPlayer)
 		{
 			if (animation.curAnim.name.startsWith('sing'))
@@ -169,6 +170,7 @@ class Character extends FlxSprite
 
 		if (!debugMode)
 		{
+
 			var nextAnim = animNext.get(animation.curAnim.name);
 			var forceDanced = animDanced.get(animation.curAnim.name);
 
@@ -192,6 +194,7 @@ class Character extends FlxSprite
 	{
 		if (!debugMode)
 		{
+
 			if (!FlxG.save.data.optimize)
 			{
 				var canInterrupt = animInterrupt.get(animation.curAnim.name);
@@ -225,6 +228,7 @@ class Character extends FlxSprite
 							playAnim('idle', forced);
 					}
 				}
+
 			}
 		}
 	}

@@ -39,6 +39,7 @@ class KadeEngineFPS extends TextField
 
 	public var memoryUsage:String;
 
+
 	public var bitmap:Bitmap;
 
 	@:noCompletion private var cacheCount:Int;

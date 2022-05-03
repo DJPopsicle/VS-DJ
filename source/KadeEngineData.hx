@@ -161,6 +161,8 @@ class KadeEngineData
 
 		if (FlxG.save.data.sickMs == null)
 			FlxG.save.data.sickMs = 45.0;
+		if (FlxG.save.data.chaosMS == null)
+			FlxG.save.data.chaosMS = 22.0;
 
 		Ratings.timingWindows = [
 			FlxG.save.data.shitMs,
@@ -169,8 +171,17 @@ class KadeEngineData
 			FlxG.save.data.sickMs
 		];
 
+
 		if (FlxG.save.data.background == null)
 			FlxG.save.data.background = true;
+
+		Ratings.specialWindows = [
+			FlxG.save.data.chaosMS,
+			FlxG.save.data.chaosMS + 500000,
+			FlxG.save.data.chaosMS + 500000,
+			FlxG.save.data.chaosMS + 500000
+		];
+
 
 		if (FlxG.save.data.noteskin == null)
 			FlxG.save.data.noteskin = 0;

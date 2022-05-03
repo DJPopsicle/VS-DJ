@@ -37,6 +37,7 @@ class Note extends FlxSprite
 	public var isSustainNote:Bool = false;
 	public var originColor:Int = 0; // The sustain note's original note's color
 	public var noteSection:Int = 0;
+	public var noteType:String;
 
 	public var luaID:Int = 0;
 
@@ -73,11 +74,16 @@ class Note extends FlxSprite
 
 	public var children:Array<Note> = [];
 
+
 	public var stepHeight:Float = 0;
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inCharter:Bool = false, ?isAlt:Bool = false, ?bet:Float = 0)
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inCharter:Bool = false, ?isAlt:Bool = false,
+			?bet:Float = 0, ?noteType:String = 'normal')
+
 	{
 		super();
+
+		this.noteType = noteType;
 
 		if (prevNote == null)
 			prevNote = this;
@@ -131,18 +137,35 @@ class Note extends FlxSprite
 
 		if (inCharter)
 		{
-			frames = PlayState.noteskinSprite;
-
-			for (i in 0...4)
+			switch (this.noteType)
 			{
-				animation.addByPrefix(dataColor[i] + 'Scroll', dataColor[i] + ' alone'); // Normal notes
-				animation.addByPrefix(dataColor[i] + 'hold', dataColor[i] + ' hold'); // Hold
-				animation.addByPrefix(dataColor[i] + 'holdend', dataColor[i] + ' tail'); // Tails
-			}
+				case 'chaos':
+					frames = Paths.getSparrowAtlas('noteskins/Chaos', 'shared');
 
-			setGraphicSize(Std.int(width * 0.7));
-			updateHitbox();
-			antialiasing = FlxG.save.data.antialiasing;
+					for (i in 0...4)
+					{
+						animation.addByPrefix(dataColor[i] + 'Scroll', dataColor[i] + ' glow charter'); // Normal notes
+						// trace("curAnimation: " + dataColor[i] + 'Scroll' + ", " + dataColor[i] + ' glow');
+					}
+
+					setGraphicSize(Std.int(width * 0.7));
+					updateHitbox();
+					antialiasing = FlxG.save.data.antialiasing;
+
+				default:
+					frames = PlayState.noteskinSprite;
+
+					for (i in 0...4)
+					{
+						animation.addByPrefix(dataColor[i] + 'Scroll', dataColor[i] + ' alone'); // Normal notes
+						animation.addByPrefix(dataColor[i] + 'hold', dataColor[i] + ' hold'); // Hold
+						animation.addByPrefix(dataColor[i] + 'holdend', dataColor[i] + ' tail'); // Tails
+					}
+
+					setGraphicSize(Std.int(width * 0.7), Std.int(width * 0.7));
+					updateHitbox();
+					antialiasing = FlxG.save.data.antialiasing;
+			}
 		}
 		else
 		{
@@ -176,19 +199,39 @@ class Note extends FlxSprite
 					setGraphicSize(Std.int(width * CoolUtil.daPixelZoom));
 					updateHitbox();
 				default:
-					frames = PlayState.noteskinSprite;
-
-					for (i in 0...4)
+					switch (this.noteType)
 					{
-						animation.addByPrefix(dataColor[i] + 'Scroll', dataColor[i] + ' alone'); // Normal notes
-						animation.addByPrefix(dataColor[i] + 'hold', dataColor[i] + ' hold'); // Hold
-						animation.addByPrefix(dataColor[i] + 'holdend', dataColor[i] + ' tail'); // Tails
+						case 'chaos':
+							frames = Paths.getSparrowAtlas('noteskins/Chaos', 'shared');
+
+							for (i in 0...4)
+							{
+								animation.addByPrefix(dataColor[i] + 'Scroll', dataColor[i] + ' glow charter'); // Normal notes
+								// trace("curAnimation: " + dataColor[i] + 'Scroll' + ", " + dataColor[i] + ' glow');
+							}
+
+							var sizeVar:Float = 0.7;
+
+							setGraphicSize(Std.int(width * sizeVar), Std.int(height * sizeVar));
+							updateHitbox();
+
+							antialiasing = FlxG.save.data.antialiasing;
+
+						default:
+							frames = PlayState.noteskinSprite;
+
+							for (i in 0...4)
+							{
+								animation.addByPrefix(dataColor[i] + 'Scroll', dataColor[i] + ' alone'); // Normal notes
+								animation.addByPrefix(dataColor[i] + 'hold', dataColor[i] + ' hold'); // Hold
+								animation.addByPrefix(dataColor[i] + 'holdend', dataColor[i] + ' tail'); // Tails
+							}
+
+							setGraphicSize(Std.int(width * 0.7));
+							updateHitbox();
+
+							antialiasing = FlxG.save.data.antialiasing;
 					}
-
-					setGraphicSize(Std.int(width * 0.7));
-					updateHitbox();
-
-					antialiasing = FlxG.save.data.antialiasing;
 			}
 		}
 

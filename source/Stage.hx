@@ -103,6 +103,7 @@ class Stage extends MusicBeatState
 							toAdd.push(phillyCityLights);
 						}
 
+
 						for (i in 0...5)
 						{
 							var light:FlxSprite = new FlxSprite(city.x).loadGraphic(Paths.image('philly/win' + i, 'week3'));

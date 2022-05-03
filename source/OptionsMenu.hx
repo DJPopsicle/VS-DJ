@@ -143,12 +143,16 @@ class OptionsMenu extends FlxSubState
 				// new OffsetMenu("Get a note offset based off of your inputs!"),
 				new DFJKOption(),
 				new Judgement("Create a custom judgement preset"),
-				new CustomizeGameplay("Drag and drop gameplay modules to your prefered positions!")
+				new CustomizeGameplay("Drag and drop gameplay modules to your prefered positions!"),
+				new ModchartsOption("Make the game less fun by turning off modcharts."),
+				new Mechanics("Toggle certain mechanics.")
 			]),
 			new OptionCata(345, 40, "Appearance", [
 				new NoteskinOption("Change your current noteskin"),
+
 				new RotateSpritesOption("Rotate the sprites to do color quantization (turn off for bar skins)"),
 				new EditorRes("Not showing the editor grid will greatly increase editor performance"),
+				new DistractionsAndEffectsOption("Toggle stage distractions that can hinder your gameplay."),
 				new MiddleScrollOption("Put your lane in the center or on the right."),
 				new HealthBarOption("Toggles health bar visibility"),
 				new JudgementCounter("Show your judgements that you've gotten in the song"),
@@ -202,11 +206,16 @@ class OptionsMenu extends FlxSubState
 				new FullscreenBind("The keybind used to fullscreen the game")
 			], true),
 			new OptionCata(-1, 125, "Editing Judgements", [
+				new ChaosMSOption("How many milliseconds are in the Chaos note hit window"),
 				new SickMSOption("How many milliseconds are in the SICK hit window"),
 				new GoodMsOption("How many milliseconds are in the GOOD hit window"),
 				new BadMsOption("How many milliseconds are in the BAD hit window"),
 				new ShitMsOption("How many milliseconds are in the SHIT hit window")
-			], true)
+			], true),
+			new OptionCata(-1, 125, "Editing Mechanics", [
+				new SpecialNotesOption("Turn off special notes in every song that uses them."),
+				new AttackNDodgeOption("Wether you will have to dodge or attack your opponent.")
+			])
 		];
 
 		instance = this;
@@ -752,6 +761,13 @@ class OptionsMenu extends FlxSubState
 							FlxG.save.data.badMs,
 							FlxG.save.data.goodMs,
 							FlxG.save.data.sickMs
+						];
+
+						Ratings.specialWindows = [
+							FlxG.save.data.chaosMS,
+							FlxG.save.data.chaosMS + 500000,
+							FlxG.save.data.chaosMS + 500000,
+							FlxG.save.data.chaosMS + 500000
 						];
 
 						for (i in 0...selectedCat.options.length)
