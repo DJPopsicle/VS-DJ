@@ -8,11 +8,13 @@ using StringTools;
 
 class DiscordClient
 {
+	public static var modesArray:Array<String> = ['Disabled', 'Per Beat', 'Per Frame', 'Real Time'];
+
 	public function new()
 	{
 		trace("Discord Client starting...");
 		DiscordRpc.start({
-			clientID: "557069829501091850", // change this to what ever the fuck you want lol
+			clientID: "942673635397763102", // change this to what ever the fuck you want lol
 			onReady: onReady,
 			onError: onError,
 			onDisconnected: onDisconnected
@@ -61,6 +63,16 @@ class DiscordClient
 			new DiscordClient();
 		});
 		trace("Discord Client initialized");
+	}
+
+	public static function getRCPmode()
+	{
+		return modesArray;
+	}
+
+	public static function getRCPmodeByID(id:Int)
+	{
+		return modesArray[id];
 	}
 
 	public static function changePresence(details:String, state:Null<String>, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float)

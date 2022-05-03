@@ -64,7 +64,7 @@ class GameplayCustomizeState extends MusicBeatState
 	{
 		super.create();
 
-		PlayStateChangeables.Optimize = false;
+		FlxG.save.data.optimize = false;
 
 		#if FEATURE_DISCORD
 		// Updating Discord Rich Presence
@@ -244,7 +244,7 @@ class GameplayCustomizeState extends MusicBeatState
 		FlxG.camera.zoom = Stage.camZoom;
 		FlxG.camera.focusOn(camFollow.getPosition());
 
-		FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
+		// FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
 
 		strumLine = new FlxSprite(0, FlxG.save.data.strumline).makeGraphic(FlxG.width, 14);
 		strumLine.scrollFactor.set();
@@ -290,7 +290,7 @@ class GameplayCustomizeState extends MusicBeatState
 			pixelShitPart4 = 'week6';
 		}
 
-		sick = new FlxSprite().loadGraphic(Paths.loadImage(pixelShitPart1 + 'sick' + pixelShitPart2, pixelShitPart3));
+		sick = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'sick' + pixelShitPart2, pixelShitPart3));
 		sick.setGraphicSize(Std.int(sick.width * 0.7));
 		sick.scrollFactor.set();
 
@@ -422,7 +422,7 @@ class GameplayCustomizeState extends MusicBeatState
 			var daLoop:Int = 0;
 			for (i in seperatedScore)
 			{
-				var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.loadImage(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2, pixelShitPart4));
+				var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2, pixelShitPart4));
 				numScore.screenCenter();
 				numScore.x = sick.x + (43 * daLoop) - 50;
 				numScore.y = sick.y + 100;
@@ -546,7 +546,7 @@ class GameplayCustomizeState extends MusicBeatState
 			switch (noteTypeCheck)
 			{
 				case 'pixel':
-					babyArrow.loadGraphic(Paths.loadImage('weeb/pixelUI/arrows-pixels', 'week6'), true, 17, 17);
+					babyArrow.loadGraphic(Paths.image('weeb/pixelUI/arrows-pixels', 'week6'), true, 17, 17);
 					babyArrow.animation.add('green', [6]);
 					babyArrow.animation.add('red', [7]);
 					babyArrow.animation.add('blue', [5]);

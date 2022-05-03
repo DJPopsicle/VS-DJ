@@ -17,16 +17,20 @@ class MusicBeatSubstate extends FlxSubState
 
 	override function destroy()
 	{
+		#if desktop
 		Application.current.window.onFocusIn.remove(onWindowFocusOut);
 		Application.current.window.onFocusIn.remove(onWindowFocusIn);
+		#end
 		super.destroy();
 	}
 
 	override function create()
 	{
 		super.create();
+		#if desktop
 		Application.current.window.onFocusIn.add(onWindowFocusIn);
 		Application.current.window.onFocusOut.add(onWindowFocusOut);
+		#end
 	}
 
 	private var lastBeat:Float = 0;
@@ -110,6 +114,8 @@ class MusicBeatSubstate extends FlxSubState
 	{
 		if (PlayState.inDaPlay)
 		{
+			PlayState.instance.vocals.pause();
+			FlxG.sound.music.pause();
 			if (!PlayState.instance.paused && !PlayState.instance.endingSong && PlayState.instance.songStarted)
 			{
 				Debug.logTrace("Lost Focus");
@@ -119,9 +125,6 @@ class MusicBeatSubstate extends FlxSubState
 				PlayState.instance.persistentUpdate = false;
 				PlayState.instance.persistentDraw = true;
 				PlayState.instance.paused = true;
-
-				PlayState.instance.vocals.stop();
-				FlxG.sound.music.stop();
 			}
 		}
 	}
@@ -130,5 +133,10 @@ class MusicBeatSubstate extends FlxSubState
 	{
 		Debug.logTrace("IM BACK!!!");
 		(cast(Lib.current.getChildAt(0), Main)).setFPSCap(FlxG.save.data.fpsCap);
+		if (PlayState.inDaPlay)
+		{
+			if (PlayState.boyfriend.stunned)
+				PlayState.boyfriend.stunned = false;
+		}
 	}
 }

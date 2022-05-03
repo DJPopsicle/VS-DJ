@@ -88,6 +88,8 @@ class StoryMenuState extends MusicBeatState
 
 	override function create()
 	{
+		Main.dumpCache();
+		Paths.clearStoredMemory();
 		weekUnlocked = unlockWeeks();
 
 		PlayState.currentSong = "bruh";
@@ -231,9 +233,21 @@ class StoryMenuState extends MusicBeatState
 			bullShit++;
 		}
 
+		PlayStateChangeables.modchart = true;
+		PlayStateChangeables.botPlay = false;
+		PlayStateChangeables.opponentMode = false;
+		PlayStateChangeables.mirrorMode = false;
+		PlayStateChangeables.holds = true;
+		PlayStateChangeables.healthDrain = false;
+		PlayStateChangeables.healthGain = 1;
+		PlayStateChangeables.healthLoss = 1;
+		PlayStateChangeables.practiceMode = false;
+		PlayStateChangeables.skillIssue = false;
+
 		trace("Line 165");
 
 		super.create();
+		Paths.clearUnusedMemory();
 	}
 
 	override function update(elapsed:Float)
@@ -328,6 +342,7 @@ class StoryMenuState extends MusicBeatState
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			movedBack = true;
 			FlxG.switchState(new MainMenuState());
+			clean();
 		}
 
 		if (FlxG.sound.music != null)

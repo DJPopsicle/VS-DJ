@@ -1,5 +1,6 @@
 package;
 
+import flixel.graphics.FlxGraphic;
 import openfl.display.Bitmap;
 import lime.app.Application;
 #if FEATURE_DISCORD
@@ -24,7 +25,7 @@ class Main extends Sprite
 	var initialState:Class<FlxState> = TitleState; // The FlxState the game starts with.
 	var zoom:Float = -1; // If -1, zoom is automatically calculated to fit the window dimensions.
 	var framerate:Int = 120; // How many frames per second the game should run at.
-	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
+	var skipSplash:Bool = false; // Whether to skip the flixel splash screen that appears in release mode.
 	var startFullscreen:Bool = false; // Whether to start the game in fullscreen on desktop targets
 
 	public static var bitmapFPS:Bitmap;
@@ -93,6 +94,13 @@ class Main extends Sprite
 
 		// Gotta run this before any assets get loaded.
 		ModCore.initialize();
+		
+		#if FEATURE_DISCORD
+		Discord.DiscordClient.initialize();
+		Application.current.onExit.add (function (exitCode) {
+			DiscordClient.shutdown();
+		});
+		#end
 
 		#if !mobile
 		fpsCounter = new KadeEngineFPS(10, 3, 0xFFFFFF);
@@ -133,6 +141,7 @@ class Main extends Sprite
 			}
 		}
 		Assets.cache.clear("songs");
+		Assets.cache.clear("images");
 		// */
 	}
 
@@ -150,7 +159,7 @@ class Main extends Sprite
 		openfl.Lib.current.stage.frameRate = cap;
 	}
 
-	public function getFPSCap():Float
+	public static function getFPSCap():Float
 	{
 		return openfl.Lib.current.stage.frameRate;
 	}
@@ -158,5 +167,12 @@ class Main extends Sprite
 	public function getFPS():Float
 	{
 		return fpsCounter.currentFPS;
+	}
+
+	// lov u tails
+	// https://github.com/nebulazorua/tails-gets-trolled-v3/blob/master/source/Main.hx
+	public static function adjustFPS(num:Float):Float
+	{
+		return num * (60 / Main.getFPSCap());
 	}
 }

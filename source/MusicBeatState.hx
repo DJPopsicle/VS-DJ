@@ -13,6 +13,9 @@ import openfl.Lib;
 import Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.addons.ui.FlxUIState;
+import openfl.system.System;
+import flixel.FlxState;
+import flixel.addons.transition.FlxTransitionableState;
 
 class MusicBeatState extends FlxUIState
 {
@@ -35,12 +38,13 @@ class MusicBeatState extends FlxUIState
 	{
 		Application.current.window.onFocusIn.remove(onWindowFocusOut);
 		Application.current.window.onFocusIn.remove(onWindowFocusIn);
+
 		super.destroy();
 	}
 
 	override function add(Object:flixel.FlxBasic):flixel.FlxBasic
 	{
-		if (FlxG.save.data.optimize)
+		if (!FlxG.save.data.optimize)
 			assets.push(Object);
 		var result = super.add(Object);
 		return result;
@@ -53,6 +57,7 @@ class MusicBeatState extends FlxUIState
 			for (i in assets)
 			{
 				remove(i);
+				i.kill();
 			}
 		}
 	}
@@ -67,6 +72,8 @@ class MusicBeatState extends FlxUIState
 			if (FlxG.save.data.laneTransparency > 1)
 				FlxG.save.data.laneTransparency = 1;
 		}
+
+		FlxTransitionableState.skipNextTransOut = false;
 
 		Application.current.window.onFocusIn.add(onWindowFocusIn);
 		Application.current.window.onFocusOut.add(onWindowFocusOut);
@@ -220,6 +227,8 @@ class MusicBeatState extends FlxUIState
 	{
 		if (PlayState.inDaPlay)
 		{
+			PlayState.instance.vocals.pause();
+			FlxG.sound.music.pause();
 			if (!PlayState.instance.paused && !PlayState.instance.endingSong && PlayState.instance.songStarted)
 			{
 				Debug.logTrace("Lost Focus");
@@ -229,9 +238,6 @@ class MusicBeatState extends FlxUIState
 				PlayState.instance.persistentUpdate = false;
 				PlayState.instance.persistentDraw = true;
 				PlayState.instance.paused = true;
-
-				PlayState.instance.vocals.stop();
-				FlxG.sound.music.stop();
 			}
 		}
 	}
@@ -240,5 +246,10 @@ class MusicBeatState extends FlxUIState
 	{
 		Debug.logTrace("IM BACK!!!");
 		(cast(Lib.current.getChildAt(0), Main)).setFPSCap(FlxG.save.data.fpsCap);
+		if (PlayState.inDaPlay)
+		{
+			if (PlayState.boyfriend.stunned)
+				PlayState.boyfriend.stunned = false;
+		}
 	}
 }

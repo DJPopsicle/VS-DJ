@@ -16,6 +16,9 @@ import openfl.display._internal.stats.DrawCallContext;
 #if flash
 import openfl.Lib;
 #end
+#if openfl
+import openfl.system.System;
+#end
 
 /**
 	The FPS class provides an easy-to-use monitor to display
@@ -32,7 +35,10 @@ class KadeEngineFPS extends TextField
 	**/
 	public var currentFPS(default, null):Int;
 
-	public var memoryUsage:Float;
+	public var memoryMegas:Float = 0;
+
+	public var memoryUsage:String;
+
 
 	public var bitmap:Bitmap;
 
@@ -111,9 +117,13 @@ class KadeEngineFPS extends TextField
 
 		if (currentCount != cacheCount /*&& visible*/)
 		{
+			memoryMegas = Math.abs(FlxMath.roundDecimal(System.totalMemory / 1000000, 1));
+			memoryUsage = (FlxG.save.data.memoryDisplay ? "\nMemory Usage: " + memoryMegas + " MB" : "");
 			text = (FlxG.save.data.fps ? "FPS: "
 				+ currentFPS
-				+ (Main.watermarks ? "\nKE " + "v" + MainMenuState.kadeEngineVer : "") : (Main.watermarks ? "KE " + "v" + MainMenuState.kadeEngineVer : ""));
+				+ memoryUsage
+				+ (Main.watermarks ? "\nKade Engine " + "v" + MainMenuState.kadeEngineVer : "") : memoryUsage
+				+ (Main.watermarks ? "\nKade Engine " + "v" + MainMenuState.kadeEngineVer : ""));
 
 			#if (gl_stats && !disable_cffi && (!html5 || !canvas))
 			text += "\ntotalDC: " + Context3DStats.totalDrawCalls();

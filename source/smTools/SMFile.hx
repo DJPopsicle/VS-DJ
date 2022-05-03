@@ -6,6 +6,7 @@ import haxe.Exception;
 import lime.app.Application;
 import Section.SwagSection;
 import haxe.Json;
+import openfl.Lib;
 
 class SMFile
 {

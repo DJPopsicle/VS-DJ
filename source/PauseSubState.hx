@@ -39,6 +39,25 @@ class PauseSubState extends MusicBeatSubstate
 
 	var bg:FlxSprite;
 
+	public static var textArray:Array<String> = [
+		"I should probably push my commits...",
+		"Yeah I use Kade Engine *insert gay fat guy dancing*",
+		"Kade engine *insert burning PC gif*",
+		"This is my kingdom cum",
+		"[Funny IP address joke]",
+		"Dead engine?",
+		"Amber best Pyro bow user fuck you!",
+		"*Insert Amoraltra cancel meme*",
+		"I love watching Yosuga No Sora with my sister.",
+		"Lag issues? Don't worry we are currently mining cryptocurrencies with ur pc :D",
+		"Also try Mic d'up Engine lol",
+		"Are you really reading this thing?",
+		"Acypto, Little Hazard's simp lolololol",
+		"WHEN FNF X RED SEQUEL???",
+		"I fced Sex mod with only one hand!",
+		"EPIC EMBED FAIL"
+	];
+
 	public function new()
 	{
 		super();
@@ -109,9 +128,10 @@ class PauseSubState extends MusicBeatSubstate
 
 		grpMenuShit = new FlxTypedGroup<Alphabet>();
 		add(grpMenuShit);
-		perSongOffset = new FlxText(5, FlxG.height - 18, 0, "Hello chat", 12);
+		perSongOffset = new FlxText(0, FlxG.height - 18, FlxG.width, textArray[FlxG.random.int(0, textArray.length - 1)] + " (-Bolo)", 12);
+		perSongOffset.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+
 		perSongOffset.scrollFactor.set();
-		perSongOffset.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 
 		#if FEATURE_FILESYSTEM
 		add(perSongOffset);
@@ -189,6 +209,7 @@ class PauseSubState extends MusicBeatSubstate
 			{
 				case "Resume":
 					close();
+					PlayState.instance.scrollSpeed = (FlxG.save.data.scrollSpeed == 1 ? PlayState.SONG.speed * PlayState.songMultiplier * PlayState.instance.scrollMult : FlxG.save.data.scrollSpeed * PlayState.songMultiplier * PlayState.instance.scrollMult);
 				case "Restart Song":
 					PlayState.startTime = 0;
 					if (PlayState.instance.useVideo)
@@ -226,8 +247,8 @@ class PauseSubState extends MusicBeatSubstate
 						PlayState.luaModchart = null;
 					}
 					#end
-					if (FlxG.save.data.fpsCap > 340)
-						(cast(Lib.current.getChildAt(0), Main)).setFPSCap(120);
+					if (FlxG.save.data.fpsCap > 300)
+						(cast(Lib.current.getChildAt(0), Main)).setFPSCap(300);
 
 					PlayState.instance.clean();
 
@@ -243,7 +264,9 @@ class PauseSubState extends MusicBeatSubstate
 						FlxG.switchState(new StoryMenuState());
 					}
 					else
+					{
 						FlxG.switchState(new FreeplayState());
+					}
 			}
 		}
 
