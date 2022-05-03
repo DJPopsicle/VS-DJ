@@ -410,6 +410,43 @@ class FullscreenBind extends Option
 	}
 }
 
+class ChaosMSOption extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		description = desc + " (Press R to reset)";
+		acceptType = true;
+	}
+
+	public override function left():Bool
+	{
+		FlxG.save.data.chaosMs--;
+		if (FlxG.save.data.chaosMs < 0)
+			FlxG.save.data.chaosMs = 0;
+		display = updateDisplay();
+		return true;
+	}
+
+	public override function right():Bool
+	{
+		FlxG.save.data.chaosMs++;
+		display = updateDisplay();
+		return true;
+	}
+
+	public override function onType(char:String)
+	{
+		if (char.toLowerCase() == "r")
+			FlxG.save.data.chaosMs = 45;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "Chaos Note: < " + FlxG.save.data.chaosMs + " ms >";
+	}
+}
+
 class SickMSOption extends Option
 {
 	public function new(desc:String)
@@ -555,34 +592,6 @@ class ShitMsOption extends Option
 	private override function updateDisplay():String
 	{
 		return "SHIT: < " + FlxG.save.data.shitMs + " ms >";
-	}
-}
-
-class RoundAccuracy extends Option
-{
-	public function new(desc:String)
-	{
-		super();
-		description = desc;
-	}
-
-	public override function left():Bool
-	{
-		FlxG.save.data.roundAccuracy = !FlxG.save.data.roundAccuracy;
-
-		display = updateDisplay();
-		return true;
-	}
-
-	public override function right():Bool
-	{
-		left();
-		return true;
-	}
-
-	private override function updateDisplay():String
-	{
-		return "Round Accuracy: < " + (FlxG.save.data.roundAccuracy ? "on" : "off") + " >";
 	}
 }
 
@@ -1075,6 +1084,33 @@ class Judgement extends Option
 	}
 }
 
+class Mechanics extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		if (OptionsMenu.isInPause)
+			description = "This option cannot be toggled in the pause menu.";
+		else
+			description = desc;
+		acceptValues = true;
+	}
+
+	public override function press():Bool
+	{
+		if (OptionsMenu.isInPause)
+			return false;
+		OptionsMenu.instance.selectedCatIndex = 6;
+		OptionsMenu.instance.switchCat(OptionsMenu.instance.options[6], false);
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "Edit Mechanics";
+	}
+}
+
 class FPSOption extends Option
 {
 	public function new(desc:String)
@@ -1419,60 +1455,6 @@ class OffsetMenu extends Option
 	}
 }
 
-class BorderFps extends Option
-{
-	public function new(desc:String)
-	{
-		super();
-		description = desc;
-	}
-
-	public override function left():Bool
-	{
-		FlxG.save.data.fpsBorder = !FlxG.save.data.fpsBorder;
-		display = updateDisplay();
-		return true;
-	}
-
-	public override function right():Bool
-	{
-		left();
-		return true;
-	}
-
-	private override function updateDisplay():String
-	{
-		return "FPS Border: < " + (!FlxG.save.data.fpsBorder ? "off" : "on") + " >";
-	}
-}
-
-class DisplayMemory extends Option
-{
-	public function new(desc:String)
-	{
-		super();
-		description = desc;
-	}
-
-	public override function left():Bool
-	{
-		FlxG.save.data.memoryDisplay = !FlxG.save.data.memoryDisplay;
-		display = updateDisplay();
-		return true;
-	}
-
-	public override function right():Bool
-	{
-		left();
-		return true;
-	}
-
-	private override function updateDisplay():String
-	{
-		return "Memory Display: < " + (!FlxG.save.data.memoryDisplay ? "off" : "on") + " >";
-	}
-}
-
 class OffsetThing extends Option
 {
 	public function new(desc:String)
@@ -1504,12 +1486,12 @@ class OffsetThing extends Option
 
 	private override function updateDisplay():String
 	{
-		return "Visual offset: < " + HelperFunctions.truncateFloat(FlxG.save.data.offset, 0) + " >";
+		return "Note offset: < " + HelperFunctions.truncateFloat(FlxG.save.data.offset, 0) + " >";
 	}
 
 	public override function getValue():String
 	{
-		return "Visual offset: < " + HelperFunctions.truncateFloat(FlxG.save.data.offset, 0) + " >";
+		return "Note offset: < " + HelperFunctions.truncateFloat(FlxG.save.data.offset, 0) + " >";
 	}
 }
 
@@ -1537,6 +1519,93 @@ class BotPlay extends Option
 
 	private override function updateDisplay():String
 		return "BotPlay: < " + (FlxG.save.data.botplay ? "on" : "off") + " >";
+}
+
+class ModchartsOption extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		if (OptionsMenu.isInPause)
+			description = "This option cannot be toggled in the pause menu.";
+		else
+			description = desc;
+	}
+
+	public override function left():Bool
+	{
+		FlxG.save.data.modcharts = !FlxG.save.data.modcharts;
+		trace('Modcharts : ' + FlxG.save.data.modcharts);
+		display = updateDisplay();
+		return true;
+	}
+
+	public override function right():Bool
+	{
+		left();
+		return true;
+	}
+
+	private override function updateDisplay():String
+		return "Modcharts: < " + (FlxG.save.data.modcharts ? "on" : "off") + " >";
+}
+
+class SpecialNotesOption extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		if (OptionsMenu.isInPause)
+			description = "This option cannot be toggled in the pause menu.";
+		else
+			description = desc;
+	}
+
+	public override function left():Bool
+	{
+		FlxG.save.data.specialNotes = !FlxG.save.data.specialNotes;
+		trace('Special Notes : ' + FlxG.save.data.specialNotes);
+		display = updateDisplay();
+		return true;
+	}
+
+	public override function right():Bool
+	{
+		left();
+		return true;
+	}
+
+	private override function updateDisplay():String
+		return "Special Notes: < " + (FlxG.save.data.specialNotes ? "on" : "off") + " >";
+}
+
+class AttackNDodgeOption extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		if (OptionsMenu.isInPause)
+			description = "This option cannot be toggled in the pause menu.";
+		else
+			description = desc;
+	}
+
+	public override function left():Bool
+	{
+		FlxG.save.data.atkndge = !FlxG.save.data.atkndge;
+		trace('Attack n Dodge : ' + FlxG.save.data.atkndge);
+		display = updateDisplay();
+		return true;
+	}
+
+	public override function right():Bool
+	{
+		left();
+		return true;
+	}
+
+	private override function updateDisplay():String
+		return "Attack n Dodge: < " + (FlxG.save.data.atkndge ? "on" : "off") + " >";
 }
 
 class CamZoomOption extends Option
@@ -1632,38 +1701,6 @@ class MiddleScrollOption extends Option
 	private override function updateDisplay():String
 	{
 		return "Middle Scroll: < " + (FlxG.save.data.middleScroll ? "Enabled" : "Disabled") + " >";
-	}
-}
-
-class RotateSpritesOption extends Option
-{
-	public function new(desc:String)
-	{
-		super();
-		if (OptionsMenu.isInPause)
-			description = "This option cannot be toggled in the pause menu.";
-		else
-			description = desc;
-	}
-
-	public override function left():Bool
-	{
-		if (OptionsMenu.isInPause)
-			return false;
-		FlxG.save.data.rotateSprites = !FlxG.save.data.rotateSprites;
-		display = updateDisplay();
-		return true;
-	}
-
-	public override function right():Bool
-	{
-		left();
-		return true;
-	}
-
-	private override function updateDisplay():String
-	{
-		return "Rotate Sprites: < " + (FlxG.save.data.rotateSprites ? "Enabled" : "Disabled") + " >";
 	}
 }
 
@@ -1929,7 +1966,6 @@ class ResetSettings extends Option
 		FlxG.save.data.flashing = null;
 		FlxG.save.data.resetButton = null;
 		FlxG.save.data.botplay = null;
-		FlxG.save.data.roundAccuracy = null;
 		FlxG.save.data.cpuStrums = null;
 		FlxG.save.data.strumline = null;
 		FlxG.save.data.customStrumLine = null;
@@ -1940,6 +1976,9 @@ class ResetSettings extends Option
 		FlxG.save.data.cacheImages = null;
 		FlxG.save.data.editor = null;
 		FlxG.save.data.laneTransparency = 0;
+		FlxG.save.data.modcharts = null;
+		FlxG.save.data.SpecialNotes = null;
+		FlxG.save.data.atkndge = null;
 
 		KadeEngineData.initSave();
 		confirm = false;

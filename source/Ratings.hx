@@ -94,7 +94,7 @@ class Ratings
 
 	public static var timingWindows = [];
 
-	public static function judgeNote(noteDiff:Float)
+	public static function judgeNote(noteDiff:Float, n)
 	{
 		var diff = Math.abs(noteDiff);
 		for (index in 0...timingWindows.length) // based on 4 timing windows, will break with anything else
@@ -113,6 +113,33 @@ class Ratings
 						return "good";
 					case 3: // sick
 						return "sick";
+				}
+			}
+		}
+		return "good";
+	}
+
+	public static var specialWindows = [];
+
+	public static function judgeSpecialNote(noteDiff:Float, n)
+	{
+		var diff = Math.abs(noteDiff);
+		for (index in 0...specialWindows.length) // based on 4 timing windows, will break with anything else
+		{
+			var time = specialWindows[index];
+			var nextTime = index + 1 > specialWindows.length - 1 ? 0 : specialWindows[index + 1];
+			if (diff < time && diff >= nextTime)
+			{
+				switch (index)
+				{
+					case 0: // chaos
+						return "chaos";
+					case 1: // chaos
+						return "chaos";
+					case 2: // chaos
+						return "chaos";
+					case 3: // chaos
+						return "chaos";
 				}
 			}
 		}

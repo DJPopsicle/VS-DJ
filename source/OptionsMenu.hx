@@ -119,7 +119,7 @@ class OptionsMenu extends FlxSubState
 		options = [
 			new OptionCata(50, 40, "Gameplay", [
 				new ScrollSpeedOption("Change your scroll speed. (1 = Chart dependent)"),
-				new OffsetThing("Change the note visual offset (how many milliseconds a note looks like it is offset in a chart)"),
+				new OffsetThing("Change the note audio offset (how many milliseconds a note is offset in a chart)"),
 				new AccuracyDOption("Change how accuracy is calculated. (Accurate = Simple, Complex = Milisecond Based)"),
 				new GhostTapOption("Toggle counting pressing a directional input when no arrow is there as a miss."),
 				new DownscrollOption("Toggle making the notes scroll down rather than up."),
@@ -132,24 +132,24 @@ class OptionsMenu extends FlxSubState
 				// new OffsetMenu("Get a note offset based off of your inputs!"),
 				new DFJKOption(),
 				new Judgement("Create a custom judgement preset"),
-				new CustomizeGameplay("Drag and drop gameplay modules to your prefered positions!")
+				new CustomizeGameplay("Drag and drop gameplay modules to your prefered positions!"),
+				new ModchartsOption("Make the game less fun by turning off modcharts."),
+				new Mechanics("Toggle certain mechanics.")
 			]),
 			new OptionCata(345, 40, "Appearance", [
 				new NoteskinOption("Change your current noteskin"),
-				new RotateSpritesOption("Should the game rotate the sprites to do color quantization (turn off for bar skins)"),
 				new EditorRes("Not showing the editor grid will greatly increase editor performance"),
 				new DistractionsAndEffectsOption("Toggle stage distractions that can hinder your gameplay."),
-				new MiddleScrollOption("Put your lane in the center or on the right."), new HealthBarOption("Toggles health bar visibility"),
+				new MiddleScrollOption("Put your lane in the center or on the right."),
+				new HealthBarOption("Toggles health bar visibility"),
 				new JudgementCounter("Show your judgements that you've gotten in the song"),
 				new LaneUnderlayOption("How transparent your lane is, higher = more visible."),
 				new StepManiaOption("Sets the colors of the arrows depending on quantization instead of direction."),
 				new AccuracyOption("Display accuracy information on the info bar."),
-				new RoundAccuracy("Round your accuracy to the nearest whole number for the score text (cosmetic only)."),
 				new SongPositionOption("Show the song's current position as a scrolling bar."),
 				new Colour("The color behind icons now fit with their theme. (e.g. Pico = green)"),
 				new NPSDisplayOption("Shows your current Notes Per Second on the info bar."),
 				new RainbowFPSOption("Make the FPS Counter flicker through rainbow colors."),
-				new BorderFps("Draw a border around the FPS Text (Consumes a lot of CPU Resources)"),
 				new CpuStrums("Toggle the CPU's strumline lighting up when it hits a note."),
 			]),
 			new OptionCata(640, 40, "Misc", [
@@ -169,17 +169,28 @@ class OptionsMenu extends FlxSubState
 				new ResetSettings("Reset ALL your settings. This is irreversible!")
 			]),
 			new OptionCata(-1, 125, "Editing Keybinds", [
-				new LeftKeybind("The left note's keybind"), new DownKeybind("The down note's keybind"), new UpKeybind("The up note's keybind"),
-				new RightKeybind("The right note's keybind"), new PauseKeybind("The keybind used to pause the game"),
-				new ResetBind("The keybind used to die instantly"), new MuteBind("The keybind used to mute game audio"),
-				new VolUpBind("The keybind used to turn the volume up"), new VolDownBind("The keybind used to turn the volume down"),
-				new FullscreenBind("The keybind used to fullscreen the game")], true),
+				new LeftKeybind("The left note's keybind"),
+				new DownKeybind("The down note's keybind"),
+				new UpKeybind("The up note's keybind"),
+				new RightKeybind("The right note's keybind"),
+				new PauseKeybind("The keybind used to pause the game"),
+				new ResetBind("The keybind used to die instantly"),
+				new MuteBind("The keybind used to mute game audio"),
+				new VolUpBind("The keybind used to turn the volume up"),
+				new VolDownBind("The keybind used to turn the volume down"),
+				new FullscreenBind("The keybind used to fullscreen the game")
+			], true),
 			new OptionCata(-1, 125, "Editing Judgements", [
+				new ChaosMSOption("How many milliseconds are in the Chaos note hit window"),
 				new SickMSOption("How many milliseconds are in the SICK hit window"),
 				new GoodMsOption("How many milliseconds are in the GOOD hit window"),
 				new BadMsOption("How many milliseconds are in the BAD hit window"),
 				new ShitMsOption("How many milliseconds are in the SHIT hit window")
-			], true)
+			], true),
+			new OptionCata(-1, 125, "Editing Mechanics", [
+				new SpecialNotesOption("Turn off special notes in every song that uses them."),
+				new AttackNDodgeOption("Wether you will have to dodge or attack your opponent.")
+			])
 		];
 
 		instance = this;
@@ -589,6 +600,13 @@ class OptionsMenu extends FlxSubState
 							FlxG.save.data.badMs,
 							FlxG.save.data.goodMs,
 							FlxG.save.data.sickMs
+						];
+
+						Ratings.specialWindows = [
+							FlxG.save.data.chaosMS,
+							FlxG.save.data.chaosMS + 500000,
+							FlxG.save.data.chaosMS + 500000,
+							FlxG.save.data.chaosMS + 500000
 						];
 
 						for (i in 0...selectedCat.options.length)

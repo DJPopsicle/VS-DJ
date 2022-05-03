@@ -1,0 +1,6 @@
+stageCurtains X: -500 Y: -300 Rotation: 0
+stageFront X: -650 Y: 600 Rotation: 0
+bg X: -600 Y: -200 Rotation: 0
+gf X: 198 Y: 324 Rotation: 0
+bf X: 770 Y: 450 Rotation: 0
+dj X: 400 Y: 130 Rotation: 0

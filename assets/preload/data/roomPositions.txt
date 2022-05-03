@@ -1,0 +1,6 @@
+plushies X: 1218 Y: 455 Rotation: 0
+fg X: -2118 Y: -920 Rotation: 0
+bg X: -1540 Y: -699 Rotation: 0
+gf X: 22 Y: 156 Rotation: 0
+bf X: 770 Y: 450 Rotation: 0
+dj-c X: 400 Y: 130 Rotation: 0
