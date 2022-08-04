@@ -130,6 +130,7 @@ class SMFile
 			needsVoices: true,
 			player1: 'bf',
 			player2: 'gf',
+			player3: 'mom',
 			gfVersion: 'gf',
 			noteStyle: 'normal',
 			stage: 'stage',

@@ -12,6 +12,7 @@ import flixel.util.FlxCollision;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import openfl.net.FileReference;
+import Song.SongData;
 
 using StringTools;
 
@@ -20,13 +21,15 @@ class StageDebugState extends FlxState
 	public var daStage:String;
 	public var daBf:String;
 	public var daGf:String;
-	public var opponent:String;
+	public var opponent1:String;
+	public var opponent2:String;
 
 	var _file:FileReference;
 
 	var gf:Character;
 	var boyfriend:Boyfriend;
 	var dad:Character;
+	var mom:Character;
 	var Stage:Stage;
 	var camFollow:FlxObject;
 	var posText:FlxText;
@@ -42,13 +45,15 @@ class StageDebugState extends FlxState
 	var charMode:Bool = true;
 	var usedObjects:Array<FlxSprite> = [];
 
-	public function new(daStage:String = 'stage', daGf:String = 'gf', daBf:String = 'bf', opponent:String = 'dad')
+	public function new(daStage:String = 'stage', daGf:String = 'gf', daBf:String = 'bf', opponent1:String = 'dad', opponent2:String = 'mom')
 	{
 		super();
 		this.daStage = daStage;
 		this.daGf = daGf;
 		this.daBf = daBf;
-		this.opponent = opponent;
+		this.opponent1 = opponent1;
+		if (PlayState.SONG.player3 != null)
+			this.opponent2 = opponent2;
 		curCharString = daGf;
 	}
 
@@ -62,7 +67,15 @@ class StageDebugState extends FlxState
 		gf = PlayState.gf;
 		boyfriend = PlayState.boyfriend;
 		dad = PlayState.dad;
-		curChars = [dad, boyfriend, gf];
+		if (PlayState.SONG.player3 != null)
+		{
+			mom = PlayState.mom;
+			curChars = [dad, mom, boyfriend, gf];
+		}
+		else
+		{
+			curChars = [dad, boyfriend, gf];
+		}
 		if (!gf.visible) // for when gf is an opponent
 			curChars.pop();
 		curChar = curChars[curCharIndex];
@@ -74,20 +87,43 @@ class StageDebugState extends FlxState
 
 		for (index => array in Stage.layInFront)
 		{
-			switch (index)
+			if (PlayState.SONG.player3 != null)
 			{
-				case 0:
-					add(gf);
-					for (bg in array)
-						add(bg);
-				case 1:
-					add(dad);
-					for (bg in array)
-						add(bg);
-				case 2:
-					add(boyfriend);
-					for (bg in array)
-						add(bg);
+				switch (index)
+				{
+					case 0:
+						add(gf);
+						for (bg in array)
+							add(bg);
+					case 1:
+						add(mom);
+						for (bg in array)
+							add(bg);
+					case 2:
+						add(dad);
+						for (bg in array)
+							add(bg);
+					case 3:
+						add(boyfriend);
+						for (bg in array)
+							add(bg);
+				}
+			} else {
+				switch (index)
+				{
+					case 0:
+						add(gf);
+						for (bg in array)
+							add(bg);
+					case 1:
+						add(dad);
+						for (bg in array)
+							add(bg);
+					case 2:
+						add(boyfriend);
+						for (bg in array)
+							add(bg);
+				}
 			}
 		}
 
@@ -223,20 +259,45 @@ class StageDebugState extends FlxState
 
 			for (index => array in Stage.layInFront)
 			{
-				switch (index)
+				if (PlayState.SONG.player3 != null)
 				{
-					case 0:
-						remove(gf);
-						for (bg in array)
-							remove(bg);
-					case 1:
-						remove(dad);
-						for (bg in array)
-							remove(bg);
-					case 2:
-						remove(boyfriend);
-						for (bg in array)
-							remove(bg);
+					switch (index)
+					{
+						case 0:
+							add(gf);
+							for (bg in array)
+								add(bg);
+						case 1:
+							add(mom);
+							for (bg in array)
+								add(bg);
+						case 2:
+							add(dad);
+							for (bg in array)
+								add(bg);
+						case 3:
+							add(boyfriend);
+							for (bg in array)
+								add(bg);
+					}
+				}
+				else
+				{
+					switch (index)
+					{
+						case 0:
+							add(gf);
+							for (bg in array)
+								add(bg);
+						case 1:
+							add(dad);
+							for (bg in array)
+								add(bg);
+						case 2:
+							add(boyfriend);
+							for (bg in array)
+								add(bg);
+					}
 				}
 			}
 		}
@@ -284,14 +345,29 @@ class StageDebugState extends FlxState
 		}
 		else
 			curChar = curChars[curCharIndex];
-		switch (curCharIndex)
+		if (PlayState.SONG.player3 != null)
 		{
-			case 0:
-				curCharString = opponent;
-			case 1:
-				curCharString = daBf;
-			case 2:
-				curCharString = daGf;
+			switch (curCharIndex)
+			{
+				case 0:
+					curCharString = opponent1;
+				case 2:
+					curCharString = opponent2;
+				case 1:
+					curCharString = daBf;
+				case 2:
+					curCharString = daGf;
+			}
+		} else {
+			switch (curCharIndex)
+			{
+				case 0:
+					curCharString = opponent1;
+				case 1:
+					curCharString = daBf;
+				case 2:
+					curCharString = daGf;
+			}
 		}
 	}
 
@@ -308,14 +384,31 @@ class StageDebugState extends FlxState
 		var char:String = '';
 		for (sprite in curChars)
 		{
-			switch (curCharIndex)
+			if (PlayState.SONG.player3 != null)
 			{
-				case 0:
-					char = daGf;
-				case 1:
-					char = daBf;
-				case 2:
-					char = opponent;
+				switch (curCharIndex)
+				{
+					case 0:
+						char = daGf;
+					case 1:
+						char = daBf;
+					case 2:
+						char = opponent1;
+					case 3:
+						char = opponent2;
+				}
+			}
+			else
+			{
+				switch (curCharIndex)
+				{
+					case 0:
+						char = daGf;
+					case 1:
+						char = daBf;
+					case 2:
+						char = opponent1;
+				}
 			}
 			result += char + ' X: ' + curChars[curCharIndex].x + " Y: " + curChars[curCharIndex].y + " Rotation: " + curChars[curCharIndex].angle + "\n";
 			++curCharIndex;

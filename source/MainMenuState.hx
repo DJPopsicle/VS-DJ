@@ -18,6 +18,7 @@ import flixel.util.FlxTimer;
 import lime.app.Application;
 import sys.io.File;
 import sys.FileSystem;
+import Options;
 #if FEATURE_DISCORD
 import Discord.DiscordClient;
 #end
@@ -36,14 +37,15 @@ class MainMenuState extends MusicBeatState
 	var menuOptions:Array<String> = [
 		'story_mode',
 		'freeplay',
-		#if MODS_ALLOWED 'mods',
+		#if MODS_ALLOWED
+		'mods',
 		#end
 		#if ACHIEVEMENTS_ALLOWED
 		'awards',
 		#end
 		'credits',
-		#if !switch 'donate',
-		#end
+		// #if !switch 'donate',
+		// #end
 		'options'
 	];
 	#else
@@ -73,7 +75,16 @@ class MainMenuState extends MusicBeatState
 
 	var djPos:Array<Float> = [-50, 0];
 
+	var dots:FlxSprite;
+	var fg:FlxSprite;
+
 	public static var finishedFunnyMove:Bool = false;
+
+	var theme = Option.themes[FlxG.save.data.theme];
+
+	var menubgColor:FlxColor;
+
+	var djTween:FlxTween;
 
 	override function create()
 	{
@@ -93,24 +104,41 @@ class MainMenuState extends MusicBeatState
 		persistentUpdate = persistentDraw = true;
 
 		var bg:FlxGraphic;
-		var bgColor:FlxColor = FlxColor.fromRGB(133, 0, 34);
-		bg = FlxGraphic.fromRectangle(4000, 4000, bgColor, true);
+		switch (theme)
+		{
+			case "cool":
+				menubgColor = FlxColor.fromRGB(42, 0, 77);
+			case "DJ":
+				menubgColor = FlxColor.fromRGB(77, 0, 3);
+			default:
+				menubgColor = FlxColor.fromRGB(77, 0, 3);
+		}
+		bg = FlxGraphic.fromRectangle(4000, 4000, menubgColor, true);
 
 		var bgObj:FlxSprite = new FlxSprite(-100, 0, bg);
 		bgObj.screenCenter();
 
 		add(bgObj);
 
-		var dots:FlxSprite = new FlxSprite(-100).loadGraphic(Paths.loadImage('mainmenu/assets/dots'));
+		dots = new FlxSprite(-30).loadGraphic(Paths.loadImage('mainmenu/assets/dots'));
 		dots.scrollFactor.x = 0;
 		dots.scrollFactor.y = 0.10;
-		dots.setGraphicSize(Std.int(dots.width * 0.8));
+		dots.setGraphicSize(Std.int(dots.width * 0.6));
 		dots.updateHitbox();
 		dots.screenCenter();
 		dots.antialiasing = FlxG.save.data.antialiasing;
 		add(dots);
 
-		var split:FlxSprite = new FlxSprite(-100).loadGraphic(Paths.loadImage('mainmenu/assets/split'));
+		fg = new FlxSprite(-100, 200).loadGraphic(Paths.loadImage('mainmenu/assets/themes/' + theme + '/fg'));
+		fg.scrollFactor.x = 0;
+		fg.scrollFactor.y = 0.1;
+		fg.setGraphicSize(Std.int(fg.width * 0.8));
+		fg.updateHitbox();
+		fg.screenCenter();
+		fg.antialiasing = FlxG.save.data.antialiasing;
+		add(fg);
+
+		var split:FlxSprite = new FlxSprite(-100, 200).loadGraphic(Paths.loadImage('mainmenu/assets/themes/' + theme + '/split'));
 		split.scrollFactor.x = 0;
 		split.scrollFactor.y = 0.10;
 		split.setGraphicSize(Std.int(split.width * 0.8));
@@ -159,12 +187,12 @@ class MainMenuState extends MusicBeatState
 
 			if (firstStart)
 			{
-				FlxTween.tween(menuItem, {y: 60 + (i * 160), x: 560 - (i * 50)}, 1 + (i * 0.25), {
+				FlxTween.tween(menuItem, {y: -230 + (i * 160), x: 660 - (i * 50)}, 1 + (i * 0.25), {
 					ease: FlxEase.expoInOut,
 					onComplete: function(flxTween:FlxTween)
 					{
-						menuItem.y = 60 + (i * 160);
-						menuItem.x = 560 - (i * 50);
+						// menuItem.y = -560 + (i * 160);
+						// menuItem.x = 560 - (i * 50);
 						finishedFunnyMove = true;
 						// changeItem(0, false);
 					}
@@ -177,6 +205,11 @@ class MainMenuState extends MusicBeatState
 				// changeItem(0, true);
 			}
 		}
+
+		FlxTween.tween(dots, {angle: dots.angle + 90}, 15, {
+			ease: FlxEase.linear,
+			type: FlxTween.LOOPING
+		});
 
 		var djSprName:String = menuOptions[curSelected];
 		var path:String = Paths.image('mainmenu/dj/' + djSprName);
@@ -195,11 +228,16 @@ class MainMenuState extends MusicBeatState
 
 		dj.y += 700;
 
-		FlxTween.tween(dj, {y: dj.y - 700}, 1, {
-			ease: FlxEase.expoOut
+		if (djTween != null)
+			djTween.cancel();
+		djTween = FlxTween.tween(dj, {y: djPos[1]}, 1, {
+			ease: FlxEase.expoOut,
+			onComplete: function(twn:FlxTween)
+			{
+				//dj.setPosition(djPos[0], djPos[1]);
+			}
 		});
 
-		firstStart = false;
 		FlxG.camera.follow(camFollow, null, 0.60 * (60 / FlxG.save.data.fpsCap));
 		FlxG.camera.follow(camFollowPos, null, 1);
 		var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, gameVer, 12);
@@ -211,7 +249,10 @@ class MainMenuState extends MusicBeatState
 			controls.setKeyboardScheme(KeyboardScheme.Solo, true);
 		else
 			controls.setKeyboardScheme(KeyboardScheme.Duo(true), true);
-		changeItem(0, true);
+		if (!firstStart)
+			changeItem(0, true);
+		firstStart = false;
+
 		super.create();
 	}
 
@@ -226,6 +267,11 @@ class MainMenuState extends MusicBeatState
 
 		var lerpVal:Float = CoolUtil.boundTo(elapsed * 7.5, 0, 1);
 		camFollowPos.setPosition(FlxMath.lerp(camFollowPos.x, camFollow.x, lerpVal), FlxMath.lerp(camFollowPos.y, camFollow.y, lerpVal));
+
+		// if (FlxG.keys.justPressed.NINE)
+		// {
+		// 	FlxG.switchState(new BGEditState());
+		// }
 
 		if (!selectedSomethin)
 		{
@@ -264,7 +310,7 @@ class MainMenuState extends MusicBeatState
 
 			if (controls.ACCEPT)
 			{
-				if (menuOptions[curSelected] == 'donate')
+				if (menuOptions[curSelected] == 'awards')
 				{
 					FlxG.switchState(new AchievementsMenuState());
 				}
@@ -384,17 +430,25 @@ class MainMenuState extends MusicBeatState
 			if (FileSystem.exists(path))
 			{
 				// dj.y += 700;
-
-				FlxTween.tween(dj, {y: dj.y + 700}, 1, {
+				if (djTween != null)
+					djTween.cancel();
+				djTween = FlxTween.tween(dj, {y: dj.y + 700}, 0.5, {
 					ease: FlxEase.expoIn,
 					onComplete: function(twn:FlxTween)
 					{
-						remove(dj);
-						dj = new FlxSprite(djPos[0], djPos[1] + 700).loadGraphic(Paths.loadImage('mainmenu/dj/' + djSprName));
-						add(dj);
+						//remove(dj);
+						//dj = new FlxSprite(djPos[0], djPos[1] + 700).loadGraphic(Paths.loadImage('mainmenu/dj/' + djSprName));
+						dj.loadGraphic(Paths.loadImage('mainmenu/dj/' + djSprName));
+						//add(dj);
 
-						FlxTween.tween(dj, {y: dj.y - 700}, 1, {
-							ease: FlxEase.expoOut
+						if (djTween != null)
+							djTween.cancel();
+						djTween = FlxTween.tween(dj, {y: djPos[1]}, 0.5, {
+							ease: FlxEase.expoOut,
+							onComplete: function(twn:FlxTween)
+							{
+								//dj.setPosition(djPos[0], djPos[1]);
+							}
 						});
 						dj.scale.x = this.djScale;
 						dj.scale.y = this.djScale;
@@ -435,4 +489,27 @@ class MainMenuState extends MusicBeatState
 			});
 		}
 	}
+
+	// override function beatHit()
+	// {
+	// 	super.beatHit();
+
+	// 	djBop();
+	// }
+
+	// function djBop():Void
+	// {
+	// 	if (dj != null)
+	// 	{
+	// 		trace("DJ Bop");
+
+	// 		dj.y -= 50;
+
+	// 		if (djTween != null)
+	// 			djTween.cancel();
+	// 		djTween = FlxTween.tween(dj, {y: dj.y + 50}, 0.2, {
+	// 			ease: FlxEase.expoOut
+	// 		});
+	// 	}
+	// }
 }

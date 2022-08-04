@@ -262,6 +262,7 @@ class Debug
 			"speed",
 			"player1",
 			"player2",
+			"player3",
 			"gfVersion",
 			"noteStyle",
 			"stage"

@@ -138,6 +138,7 @@ class OptionsMenu extends FlxSubState
 			]),
 			new OptionCata(345, 40, "Appearance", [
 				new NoteskinOption("Change your current noteskin"),
+				new BGThemeOption("Change the theme of the main menu."),
 				new EditorRes("Not showing the editor grid will greatly increase editor performance"),
 				new DistractionsAndEffectsOption("Toggle stage distractions that can hinder your gameplay."),
 				new MiddleScrollOption("Put your lane in the center or on the right."),

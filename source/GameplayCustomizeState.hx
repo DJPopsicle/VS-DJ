@@ -49,11 +49,13 @@ class GameplayCustomizeState extends MusicBeatState
 	private var dataColor:Array<String> = ['purple', 'blue', 'green', 'red'];
 
 	public static var dad:Character;
+	public static var mom:Character;
 	public static var gf:Character;
 	public static var boyfriend:Boyfriend;
 	public static var Stage:Stage;
 	public static var freeplayBf:String = 'bf';
 	public static var freeplayDad:String = 'dad';
+	public static var freeplayMom:String = 'mom';
 	public static var freeplayGf:String = 'gf';
 	public static var freeplayNoteStyle:String = 'normal';
 	public static var freeplayStage:String = 'stage';

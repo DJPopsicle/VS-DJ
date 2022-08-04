@@ -47,6 +47,8 @@ typedef SongData =
 	var speed:Float;
 	var player1:String;
 	var player2:String;
+	var player3:String;
+	var player3Active:Bool;
 	var gfVersion:String;
 	var noteStyle:String;
 	var stage:String;

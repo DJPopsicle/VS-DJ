@@ -35,6 +35,7 @@ class Note extends FlxSprite
 	public var originColor:Int = 0; // The sustain note's original note's color
 	public var noteSection:Int = 0;
 	public var noteType:String;
+	public var player3Note:Bool;
 
 	public var luaID:Int = 0;
 
@@ -72,11 +73,12 @@ class Note extends FlxSprite
 	public var children:Array<Note> = [];
 
 	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inCharter:Bool = false, ?isAlt:Bool = false,
-			?bet:Float = 0, ?noteType:String = 'normal')
+			?bet:Float = 0, ?noteType:String = 'normal', ?isplayer3Note:Bool = false)
 	{
 		super();
 
 		this.noteType = noteType;
+		player3Note = isplayer3Note;
 
 		if (prevNote == null)
 			prevNote = this;

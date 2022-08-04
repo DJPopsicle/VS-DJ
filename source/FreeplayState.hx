@@ -621,6 +621,7 @@ class FreeplayState extends MusicBeatState
 				Conductor.changeBPM(hmm.bpm);
 				GameplayCustomizeState.freeplayBf = hmm.player1;
 				GameplayCustomizeState.freeplayDad = hmm.player2;
+				GameplayCustomizeState.freeplayMom = hmm.player3;
 				GameplayCustomizeState.freeplayGf = hmm.gfVersion;
 				GameplayCustomizeState.freeplayNoteStyle = hmm.noteStyle;
 				GameplayCustomizeState.freeplayStage = hmm.stage;

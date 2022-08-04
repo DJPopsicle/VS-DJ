@@ -1640,6 +1640,8 @@ class LuaSprite extends LuaClass
 		return 0;
 	}
 
+	
+
 	private static function tweenAngle(l:StatePointer):Int
 	{
 		// 1 = self

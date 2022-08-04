@@ -13,6 +13,7 @@ class PlayerSettings
 	static public var numAvatars(default, null) = 0;
 	static public var player1(default, null):PlayerSettings;
 	static public var player2(default, null):PlayerSettings;
+	static public var player3(default, null):PlayerSettings;
 
 	#if (haxe >= "4.0.0")
 	static public final onAvatarAdd = new FlxTypedSignal<PlayerSettings->Void>();

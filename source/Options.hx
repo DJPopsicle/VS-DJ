@@ -23,6 +23,11 @@ class Option
 
 	public var waitingType:Bool = false;
 
+	public static var themes:Array<String> = ["DJ", "cool"];
+
+	public static var theme:Int;
+	public static var themeName:String;
+
 	public final function getDisplay():String
 	{
 		return display;
@@ -1743,6 +1748,41 @@ class NoteskinOption extends Option
 	}
 }
 
+class BGThemeOption extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+	}
+
+	public override function left():Bool
+	{
+		FlxG.save.data.theme--;
+		if (FlxG.save.data.theme < 0)
+			FlxG.save.data.theme = Option.themes.length - 1;
+		Option.themeName = Option.themes[FlxG.save.data.theme];
+		display = updateDisplay();
+		return true;
+	}
+
+	public override function right():Bool
+	{
+		FlxG.save.data.theme++;
+		if (FlxG.save.data.theme > Option.themes.length - 1)
+			FlxG.save.data.theme = 0;
+		Option.themeName = Option.themes[FlxG.save.data.theme];
+		display = updateDisplay();
+		return true;
+	}
+
+	public override function getValue():String
+	{
+		Option.themeName = Option.themes[FlxG.save.data.theme];
+		return "Current Theme: < " + Option.themeName + " >";
+	}
+}
+
 class HealthBarOption extends Option
 {
 	public function new(desc:String)
@@ -1979,6 +2019,7 @@ class ResetSettings extends Option
 		FlxG.save.data.modcharts = null;
 		FlxG.save.data.SpecialNotes = null;
 		FlxG.save.data.atkndge = null;
+		FlxG.save.data.theme = null;
 
 		KadeEngineData.initSave();
 		confirm = false;

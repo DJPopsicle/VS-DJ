@@ -166,6 +166,9 @@ class KadeEngineData
 		if (FlxG.save.data.noteskin == null)
 			FlxG.save.data.noteskin = 0;
 
+		if (FlxG.save.data.theme == null)
+			FlxG.save.data.theme = 0;
+
 		// Gonna make this an option on another PR
 		if (FlxG.save.data.overrideNoteskins == null)
 			FlxG.save.data.overrideNoteskins = false;
